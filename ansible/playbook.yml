@@ -1,0 +1,6 @@
+---
+- name: establish a dedicated palworld server on a Linux (debian 12)
+  hosts: all
+  become: true
+  roles:
+    - digitalocean

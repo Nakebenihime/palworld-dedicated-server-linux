@@ -1,0 +1,34 @@
+---
+# debian-prerequisites tasks
+- name: debian-prerequisites > introduce a delay (avoid lock issues)
+  ansible.builtin.wait_for:
+   timeout: 20
+
+- name: debian-prerequisites > update apt cache
+  ansible.builtin.apt:
+   update_cache: true
+
+- name: debian-prerequisites > upgrade apt packages
+  ansible.builtin.apt:
+   upgrade: true
+
+- name: debian-prerequisites > install software-properties-common
+  ansible.builtin.apt:
+   name: software-properties-common
+   state: present
+
+- name: debian-prerequisites > enable non-free debian repository
+  ansible.builtin.apt_repository:
+   repo: "deb {{ debian_mirror }} {{ ansible_distribution_release }} {{ debian_repositories }}"
+   state: present
+  register: __repository_status
+
+- name: debian-prerequisites > check and add i386 architecture
+  ansible.builtin.command: dpkg --add-architecture i386
+  register: __i386_arch
+  changed_when: __i386_arch.rc != 0
+
+- name: debian-prerequisites > update apt cache if repository or i386 is added
+  ansible.builtin.apt:
+   update_cache: true
+  when: __repository_status.changed or __i386_arch.changed

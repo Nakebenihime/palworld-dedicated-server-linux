@@ -1,0 +1,41 @@
+---
+# firewall (ufw) tasks
+- name: firewall (ufw) > install
+  ansible.builtin.apt:
+    name: ufw
+    state: present
+
+- name: firewall (ufw) > configure policies and rules
+  block:
+    - name: firewall (ufw) > flush
+      community.general.ufw:
+        state: reset
+
+    - name: firewall (ufw) > set incoming and outgoing default policies
+      community.general.ufw:
+        policy: '{{ item.policy }}'
+        direction: '{{ item.direction }}'
+      loop: '{{ ufw_default_policies }}'
+
+    - name: firewall (ufw) > open "palworld" public port
+      community.general.ufw:
+        rule: '{{ ufw_palworld_server.rule }}'
+        port: '{{ ufw_palworld_server.port }}'
+        proto: '{{ ufw_palworld_server.protocol }}'
+
+    - name: firewall (ufw) > open other specified ports
+      community.general.ufw:
+        rule: '{{ item.rule }}'
+        port: '{{ item.port }}'
+        protocol: '{{ item.protocol }}'
+      loop: '{{ ufw_allowed_ports }}'
+
+  always:
+    - name: firewall (ufw) > always allow SSH traffic
+      community.general.ufw:
+        rule: allow
+        port: 22
+        proto: tcp
+    - name: firewall (ufw) > enable ufw
+      community.general.ufw:
+        state: enabled

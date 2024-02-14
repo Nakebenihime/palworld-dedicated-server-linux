@@ -1,0 +1,4 @@
+skip_list:
+    - name[casing]
+    - yaml[truthy]
+    - yaml[line-length]

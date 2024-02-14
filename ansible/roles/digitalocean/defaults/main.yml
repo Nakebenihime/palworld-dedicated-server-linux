@@ -1,0 +1,113 @@
+---
+# defaults file for roles/digitalocean
+
+# debian apt repositories
+debian_mirror: https://deb.debian.org/debian/
+debian_repositories: contrib non-free
+
+# firewall (ufw) settings
+ufw_palworld_server: { port: 8211, protocol: "udp", rule: allow } # allow palworld server port (this can be modified at your convenience)
+
+ufw_default_policies:
+  - { policy: "deny", direction: "incoming" }              # deny all incoming traffic
+  - { policy: "allow", direction: "outgoing" }             # allow all outgoing traffic
+
+ufw_allowed_ports:
+  - { port: 22, protocol: "tcp", rule: allow }             # allow secure socket shell (SSH)
+  # - { port: 25575, protocol: "tcp", rule: allow }        # (optional) allow remote control (RCON)
+  # - { port: 27015, protocol: "udp", rule: allow }        # (optional) allow steam authentication
+  # - { port: 27015, protocol: "tcp", rule: allow }        # (optional) allow steam authentication
+
+
+# steamcmd user settings
+steamcmd_user: steam
+steamcmd_user_group: steam
+steamcmd_user_home: '/home/{{ steamcmd_user }}'
+steamcmd_user_password: password1234@
+
+# steamcmd palworld settings
+steamcmd_application_id: 2394010
+steamcmd_home_directory: /usr/games/steamcmd
+steamcmd_download_command: '{{ steamcmd_home_directory }} +login anonymous +app_update {{ steamcmd_application_id }} validate +quit'
+
+# palworld maintenance (backup) script
+palworld_backup_directory: '{{ steamcmd_user_home }}/palworld_backups/'
+palworld_backup_retention_days: 5                # specifies the duration for which the backups will be retained in days
+
+# palworld settings
+palworld_home_directory: '{{ steamcmd_user_home }}/.steam/steam/steamapps/common/PalServer'
+palworld_save_directory: '{{ palworld_home_directory }}/Pal/Saved'
+palworld_settings_file: '{{ palworld_save_directory }}/Config/LinuxServer/PalWorldSettings.ini'
+
+# palworld.service settings
+palworld_systemd_service_settings:
+  palworld_advanced_options: '-useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS' # improves performance in multi-threaded CPU environments
+  restart_policy: always                         # specifies the restart policy : no|always|on-success|on-failure|on-abnormal|on-abort|on-watchdog
+  restart_waiting_policy: 30s                    # specifies the time to wait before restarting the service after it exits
+  max_runtime: 4h                                # sets the maximum time the service is allowed to run
+  max_memory: 7G                                 # sets the maximum amount of memory the service is allowed to use
+
+# palworld settings (https://tech.palworldgame.com/optimize-game-balance)
+palworld_settings_options:
+  difficulty: None
+  day_time_speed_rate: 1.0
+  night_time_speed_rate: 1.0
+  exp_rate: 1.0
+  pal_capture_rate: 1.0
+  pal_spawn_num_rate: 1.0
+  pal_damage_rate_attack: 1.0
+  pal_damage_rate_defense: 1.0
+  player_damage_rate_attack: 1.0
+  player_damage_rate_defense: 1.0
+  player_stomach_decrease_rate: 1.0
+  player_stamina_decrease_rate: 1.0
+  player_auto_hp_regene_rate: 1.0
+  player_auto_hp_regene_rate_in_sleep: 1.0
+  pal_stomach_decrease_rate: 1.0
+  pal_stamina_decrease_rate: 1.0
+  pal_auto_hp_regene_rate: 1.0
+  pal_auto_hp_regene_rate_in_sleep: 1.0
+  build_object_damage_rate: 1.0
+  build_object_deterioration_damage_rate: 1.0
+  collection_drop_rate: 1.0
+  collection_object_hp_rate: 1.0
+  collection_object_respawn_speed_rate: 1.0
+  enemy_drop_item_rate: 1.0
+  death_penalty: All
+  b_enable_player_to_player_damage: False
+  b_enable_friendly_fire: False
+  b_enable_invader_enemy: True
+  b_active_unko: False
+  b_enable_aim_assist_pad: True
+  b_enable_aim_assist_keyboard: False
+  drop_item_max_num: 3000
+  drop_item_max_num_unko: 100
+  base_camp_max_num: 128
+  base_camp_worker_max_num: 15
+  drop_item_alive_max_hours: 1.0
+  b_auto_reset_guild_no_online_players: False
+  auto_reset_guild_time_no_online_players: 72
+  guild_player_max_num: 20
+  pal_egg_default_hatching_time: 72
+  work_speed_rate: 1.0
+  b_is_multiplay: False
+  b_is_pvp: False
+  b_can_pickup_other_guild_death_penalty_drop: False
+  b_enable_non_login_penalty: True
+  b_enable_fast_travel: True
+  b_is_start_location_select_by_map: True
+  b_exist_player_after_logout: False
+  b_enable_defense_other_guild_player: False
+  coop_player_max_num: 4
+  server_player_max_num: 32
+  server_name: "Palworld Dedicated Server on LINUX"
+  server_description: "The Palworld Dedicated Server on Linux is provisioned using Ansible and Terraform. For the latest updates, follow: https://github.com/Nakebenihime/palworld-dedicated-server-linux.git."
+  admin_password: ""
+  server_password: ""
+  public_port: '{{ ufw_palworld_server.port }}'
+  public_ip: "{{ ansible_default_ipv4['address'] }}"
+  rcon_enabled: False
+  rcon_port: 25575
+  region: ""
+  b_use_auth: True
+  ban_list_url: "https://api.palworldgame.com/api/banlist.txt"

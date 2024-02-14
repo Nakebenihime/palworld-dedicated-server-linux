@@ -1,0 +1,16 @@
+[Unit]
+Description=Palworld Dedicated Server on Debian 12
+Wants=network-online.target
+After=network.target
+
+[Service]
+User={{ steamcmd_user }}
+ExecStartPre={{ steamcmd_user_home }}/palworld-maintenance.sh
+ExecStart={{ palworld_home_directory }}/PalServer.sh {{ palworld_systemd_service_settings.palworld_advanced_options }} -port={{ ufw_palworld_server.port }} > /dev/null
+Restart={{ palworld_systemd_service_settings.restart_policy }}
+RestartSec={{ palworld_systemd_service_settings.restart_waiting_policy }}
+RuntimeMaxSec={{ palworld_systemd_service_settings.max_runtime }}
+MemoryMax= {{ palworld_systemd_service_settings.max_memory }}
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,80 @@
+---
+# palworld tasks
+- name: palworld > download palworld dedicated server via steamcmd
+  ansible.builtin.command: >
+    {{ steamcmd_download_command }}
+  args:
+    chdir: '{{ steamcmd_user_home }}'
+  become: true
+  become_user: '{{ steamcmd_user }}'
+  changed_when: false
+
+- name: palworld > create symbolic links for sdk32 and sdk64
+  ansible.builtin.file:
+    src: '{{ item.src }}'
+    dest: '{{ item.dest }}'
+    state: link
+    owner: '{{ steamcmd_user }}'
+    group: '{{ steamcmd_user_group }}'
+    follow: false
+  loop:
+    - { src: '{{ steamcmd_user_home }}/.steam/steam/steamcmd/linux32', dest: '{{ steamcmd_user_home }}/.steam/sdk32' }
+    - { src: '{{ steamcmd_user_home }}/.steam/steam/steamcmd/linux64', dest: '{{ steamcmd_user_home }}/.steam/sdk64' }
+
+- name: palworld > check if saved directory exists
+  ansible.builtin.stat:
+    path: '{{ palworld_save_directory }}'
+  register: __palworld_saved_dir_exists
+
+- name: palworld > start palworld to generate configuration files
+  ansible.builtin.command: >
+    timeout 20s ./PalServer.sh -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS
+  args:
+    chdir: '{{ palworld_home_directory }}'
+  become: true
+  become_user: '{{ steamcmd_user }}'
+  changed_when: false
+  failed_when: false  # (timeout rc == 124)
+  when: not __palworld_saved_dir_exists.stat.exists
+
+- name: palworld > retrieve palworld.service status
+  ansible.builtin.systemd_service:
+    name: palworld
+  register: __palworld_status
+
+- name: palworld > stop palworld.service if running
+  ansible.builtin.systemd_service:
+    name: palworld
+    state: stopped
+  when: __palworld_status.status.ActiveState == 'active'
+
+- name: palworld > modify 'PalworldSettings.ini' configuration file using j2
+  ansible.builtin.template:
+    src: templates/palworld_settings.j2
+    dest: '{{ palworld_settings_file }}'
+    owner: '{{ steamcmd_user }}'
+    group: '{{ steamcmd_user_group }}'
+    mode: '0644'
+    follow: false
+  register: __template_palworld_settings_status
+  changed_when: __template_palworld_settings_status.changed
+
+- name: palworld > create/modify palworld.service
+  ansible.builtin.template:
+    src: templates/palworld_systemd_service.j2
+    dest: /etc/systemd/system/palworld.service
+    mode: '0644'
+  register: __template_palworld_systemd_status
+
+- name: palworld > create/modify palworld-maintenance.sh
+  ansible.builtin.template:
+    src: templates/palworld_maintenance_script.j2
+    dest: '{{ steamcmd_user_home }}/palworld-maintenance.sh'
+    mode: '0755'
+  register: __template_palworld_maintenance_script_status
+
+- name: palworld > reload daemon to make sure systemd has read any changes
+  ansible.builtin.systemd_service:
+    name: palworld
+    daemon_reload: true
+  when: __template_palworld_systemd_status.changed or __template_palworld_settings_status.changed or __template_palworld_maintenance_script_status

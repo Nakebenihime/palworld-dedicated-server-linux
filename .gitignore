@@ -1,0 +1,10 @@
+# ingore local .terraform directory
+**/.terraform/*
+# ignore Terraform state files
+*.tfstate
+*.tfstate.*
+# ignore variables files
+*.tfvars
+
+# vscode
+.vscode/*

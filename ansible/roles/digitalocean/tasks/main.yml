@@ -1,0 +1,14 @@
+---
+# tasks file for roles/digitalocean
+
+- name: debian-prerequisites
+  ansible.builtin.include_tasks: ansible_debian.yml
+
+- name: steamcmd
+  ansible.builtin.include_tasks: ansible_steamcmd.yml
+
+- name: ufw-firewall
+  ansible.builtin.include_tasks: ansible_ufw_firewall.yml
+
+- name: palworld
+  ansible.builtin.include_tasks: ansible_palworld.yml

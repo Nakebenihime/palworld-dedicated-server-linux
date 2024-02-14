@@ -1,0 +1,50 @@
+---
+# steamcmd tasks
+- name: steamcmd > check if steamcmd is installed
+  ansible.builtin.apt:
+   name: steamcmd
+   state: present
+  register: __steamcmd_status
+  ignore_errors: true
+
+- name: steamcmd > configure debconf for steamcmd (interactive step 1 and 2)
+  ansible.builtin.debconf:
+   name: steamcmd
+   question: '{{ item.question }}'
+   value: '{{ item.value }}'
+   vtype: '{{ item.vtype }}'
+  with_items:
+   - { question: "steam/question", value: "I AGREE", vtype: "select" }
+   - { question: "steam/license", value: "", vtype: "note" }
+  when: __steamcmd_status is failed
+
+- name: steamcmd > install steamcmd
+  ansible.builtin.apt:
+   name: steamcmd
+   state: present
+
+- name: steamcmd > install sudo
+  ansible.builtin.apt:
+   name: sudo
+   state: present
+
+- name: steamcmd > check if 'steam' user exists
+  ansible.builtin.getent:
+   database: passwd
+   key: '{{ steamcmd_user }}'
+  register: __user_exists
+  ignore_errors: true
+
+- name: steamcmd > create 'steam' user
+  ansible.builtin.user:
+   name: '{{ steamcmd_user }}'
+   home: '{{ steamcmd_user_home }}'
+   shell: /bin/bash
+   create_home: true
+  when: __user_exists is failed
+
+- name: steamcmd > set password for 'steam' user
+  ansible.builtin.user:
+   name: '{{ steamcmd_user }}'
+   password: "{{ steamcmd_user_password | ansible.builtin.password_hash('sha512') }}"
+  when: __user_exists is failed

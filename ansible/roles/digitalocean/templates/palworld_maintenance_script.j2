@@ -1,0 +1,3 @@
+#!/bin/bash
+
+{{steamcmd_download_command }} && mkdir -p {{ palworld_backup_directory }} && tar -czvf {{ palworld_backup_directory }}"palworld_$(date '+%Y-%m-%d_%H-%M-%S').tar.gz" {{ palworld_save_directory }} && find {{ palworld_backup_directory }} -mtime +{{ palworld_backup_retention_days }} -type f -delete
