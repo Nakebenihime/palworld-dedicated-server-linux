@@ -1,0 +1,36 @@
+---
+# tasks file for roles/palworld_server
+
+- name: load defaults
+  ansible.builtin.include_vars:
+    dir: "{{ role_path }}/defaults"
+    extensions: [yml]
+
+- name: load OS-specific variables
+  ansible.builtin.include_vars:
+    file: "{{ ansible_facts['distribution'] | lower }}.yml"
+
+- name: assert supported distribution
+  ansible.builtin.assert:
+    that: ansible_facts['distribution'] | lower in ['debian', 'ubuntu']
+    fail_msg: >
+      Distribution '{{ ansible_facts['distribution'] }}' is not supported.
+      Supported: Debian, Ubuntu.
+      To add support, create vars/{{ ansible_facts['distribution'] | lower }}.yml
+      and tasks/os_setup/{{ ansible_facts['distribution'] | lower }}.yml.
+
+- name: os-setup
+  ansible.builtin.include_tasks: "os_setup/{{ ansible_facts['distribution'] | lower }}.yml"
+  tags: [os_setup]
+
+- name: steamcmd
+  ansible.builtin.include_tasks: "steamcmd/{{ steamcmd_install_driver }}.yml"
+  tags: [steamcmd]
+
+- name: firewall
+  ansible.builtin.include_tasks: firewall/dispatch.yml
+  tags: [firewall]
+
+- name: palworld
+  ansible.builtin.include_tasks: palworld.yml
+  tags: [palworld]

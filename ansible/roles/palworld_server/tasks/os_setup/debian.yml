@@ -1,0 +1,46 @@
+---
+# os-setup tasks for Debian (12, 13)
+
+- name: os-setup > bootstrap python3 (required for ansible modules)
+  ansible.builtin.raw: apt-get install -y python3
+  become: true
+  changed_when: false
+
+- name: os-setup > wait for apt lock to clear
+  ansible.builtin.wait_for:
+    timeout: 20
+
+- name: os-setup > update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+
+- name: os-setup > upgrade apt packages
+  ansible.builtin.apt:
+    upgrade: true
+
+- name: os-setup > install base packages
+  ansible.builtin.apt:
+    name: "{{ os_packages_base }}"
+    state: present
+
+- name: os-setup > enable non-free repository (required for steamcmd)
+  ansible.builtin.apt_repository:
+    repo: "deb {{ os_mirror }} {{ ansible_facts['distribution_release'] }} {{ os_extra_repos }}"
+    state: present
+  register: __repository_status
+
+- name: os-setup > check if i386 architecture is already enabled
+  ansible.builtin.command: dpkg --print-foreign-architectures
+  register: __foreign_arches
+  changed_when: false
+
+- name: os-setup > add i386 architecture
+  ansible.builtin.command: dpkg --add-architecture i386
+  register: __i386_added
+  changed_when: true
+  when: "'i386' not in __foreign_arches.stdout"
+
+- name: os-setup > update apt cache if repository or i386 architecture changed
+  ansible.builtin.apt:
+    update_cache: true
+  when: __repository_status.changed or (__i386_added is defined and __i386_added.changed)

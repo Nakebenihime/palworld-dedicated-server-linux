@@ -1,0 +1,13 @@
+---
+# handlers file for roles/palworld_server
+
+- name: reload systemd daemon
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  listen: reload systemd daemon
+
+- name: restart palworld
+  ansible.builtin.systemd_service:
+    name: palworld
+    state: restarted
+  listen: restart palworld

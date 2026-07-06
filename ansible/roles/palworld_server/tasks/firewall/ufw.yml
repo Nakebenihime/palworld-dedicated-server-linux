@@ -1,0 +1,42 @@
+---
+# firewall (ufw) tasks
+
+- name: firewall (ufw) > configure policies and rules
+  block:
+    - name: firewall (ufw) > flush all rules
+      community.general.ufw:
+        state: reset
+
+    - name: firewall (ufw) > deny all incoming traffic
+      community.general.ufw:
+        policy: deny
+        direction: incoming
+
+    - name: firewall (ufw) > allow all outgoing traffic
+      community.general.ufw:
+        policy: allow
+        direction: outgoing
+
+    - name: firewall (ufw) > open palworld game port
+      community.general.ufw:
+        rule: allow
+        port: '{{ firewall_palworld_port }}'
+        proto: '{{ firewall_palworld_protocol }}'
+
+    - name: firewall (ufw) > open extra user-defined ports
+      community.general.ufw:
+        rule: allow
+        port: '{{ item.port }}'
+        proto: '{{ item.protocol }}'
+      loop: '{{ firewall_extra_ports }}'
+
+  always:
+    - name: firewall (ufw) > always allow SSH traffic
+      community.general.ufw:
+        rule: allow
+        port: '{{ firewall_ssh_port }}'
+        proto: tcp
+
+    - name: firewall (ufw) > enable ufw
+      community.general.ufw:
+        state: enabled

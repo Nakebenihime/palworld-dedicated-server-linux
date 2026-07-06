@@ -1,4 +1,4 @@
-# ingore local .terraform directory
+# ignore local .terraform directory
 **/.terraform/*
 # ignore Terraform state files
 *.tfstate
@@ -6,5 +6,14 @@
 # ignore variables files
 *.tfvars
 
-# vscode
+# ignore vscode folder
 .vscode/*
+
+# ignore .claude folder
+.claude/
+
+# ignore .ansible folder
+.ansible/
+
+# ingore .venv folder
+.venv/

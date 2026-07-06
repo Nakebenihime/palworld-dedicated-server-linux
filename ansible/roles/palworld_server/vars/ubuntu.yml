@@ -1,0 +1,18 @@
+---
+# OS-specific vars for ubuntu
+# Loaded automatically via: include_vars: "{{ ansible_distribution }}.yml"
+
+steamcmd_install_driver: ubuntu
+firewall_driver: ufw
+
+os_packages_base:
+  - software-properties-common
+  - sudo
+# only needed when become_user targets an unprivileged user (non-root)
+  - acl
+
+os_packages_steamcmd:
+  - steamcmd
+
+os_packages_firewall:
+  - ufw

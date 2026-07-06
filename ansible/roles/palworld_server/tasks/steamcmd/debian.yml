@@ -1,5 +1,6 @@
 ---
-# steamcmd tasks
+# steamcmd tasks for Debian 12
+
 - name: steamcmd > check if steamcmd is installed
   ansible.builtin.apt:
    name: steamcmd
@@ -20,31 +21,26 @@
 
 - name: steamcmd > install steamcmd
   ansible.builtin.apt:
-   name: steamcmd
-   state: present
+    name: "{{ os_packages_steamcmd }}"
+    state: present
 
-- name: steamcmd > install sudo
-  ansible.builtin.apt:
-   name: sudo
-   state: present
-
-- name: steamcmd > check if 'steam' user exists
+- name: steamcmd > check if '{{ steamcmd_user }}' user exists
   ansible.builtin.getent:
-   database: passwd
-   key: '{{ steamcmd_user }}'
+    database: passwd
+    key: '{{ steamcmd_user }}'
   register: __user_exists
   ignore_errors: true
 
-- name: steamcmd > create 'steam' user
+- name: steamcmd > create '{{ steamcmd_user }}' user
   ansible.builtin.user:
-   name: '{{ steamcmd_user }}'
-   home: '{{ steamcmd_user_home }}'
-   shell: /bin/bash
-   create_home: true
+    name: '{{ steamcmd_user }}'
+    home: '{{ steamcmd_user_home }}'
+    shell: /bin/bash
+    create_home: true
   when: __user_exists is failed
 
-- name: steamcmd > set password for 'steam' user
+- name: steamcmd > set password for '{{ steamcmd_user }}' user
   ansible.builtin.user:
-   name: '{{ steamcmd_user }}'
-   password: "{{ steamcmd_user_password | ansible.builtin.password_hash('sha512') }}"
+    name: '{{ steamcmd_user }}'
+    password: "{{ steamcmd_user_password | ansible.builtin.password_hash('sha512') }}"
   when: __user_exists is failed

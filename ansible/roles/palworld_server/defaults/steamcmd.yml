@@ -1,0 +1,12 @@
+---
+# steamcmd settings
+
+steamcmd_user: steam
+steamcmd_user_group: steam
+steamcmd_user_home: '/home/{{ steamcmd_user }}'
+steamcmd_user_password: password1234@
+
+steamcmd_application_id: 2394010
+steamcmd_server_directory: '{{ steamcmd_user_home }}/palworld'
+steamcmd_home_directory: /usr/games/steamcmd
+steamcmd_download_command: '{{ steamcmd_home_directory }} +force_install_dir {{ steamcmd_server_directory }} +login anonymous +app_update {{ steamcmd_application_id }} validate +quit'

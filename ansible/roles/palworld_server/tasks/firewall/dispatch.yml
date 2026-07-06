@@ -1,0 +1,10 @@
+---
+# firewall dispatcher: installs the firewall package then delegates to the driver-specific task file
+
+- name: firewall > install firewall package
+  ansible.builtin.package:
+    name: "{{ os_packages_firewall }}"
+    state: present
+
+- name: "firewall > apply {{ firewall_driver }} rules"
+  ansible.builtin.include_tasks: "{{ firewall_driver }}.yml"

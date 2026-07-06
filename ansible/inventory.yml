@@ -1,2 +1,24 @@
-plugin: cloud.terraform.terraform_provider
-project_path: ../terraform/
+---
+# Static inventory — use this when running Ansible without Terraform.
+# Copy this file to inventory.yml and fill in your server details.
+#
+# To run the playbook manually:
+#   ansible-playbook -i inventory.yml playbook.yml
+
+all:
+  hosts:
+    ubuntu-24:
+      ansible_host: 192.168.1.22
+      ansible_user: proxyd
+      ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+    ubuntu-26:
+      ansible_host: 192.168.1.19
+      ansible_user: proxyd
+      ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+#    debian-13:
+#      ansible_host: 192.168.1.23
+#      ansible_user: proxyd
+#      ansible_ssh_private_key_file: ~/.ssh/id_ed25519
+
+#plugin: cloud.terraform.terraform_provider
+#project_path: ../terraform/

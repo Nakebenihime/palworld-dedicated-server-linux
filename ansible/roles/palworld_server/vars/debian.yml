@@ -1,0 +1,19 @@
+---
+# OS-specific vars for debian
+# Loaded automatically via: include_vars: "{{ ansible_distribution }}.yml"
+
+steamcmd_install_driver: debian
+firewall_driver: ufw
+
+os_mirror: "https://deb.debian.org/debian/"
+os_extra_repos: "contrib non-free"
+
+os_packages_base:
+  - software-properties-common
+  - sudo
+
+os_packages_steamcmd:
+  - steamcmd
+
+os_packages_firewall:
+  - ufw

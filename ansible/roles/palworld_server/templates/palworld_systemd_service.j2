@@ -1,0 +1,18 @@
+[Unit]
+Description=palworld_dedicated_server
+Wants=network-online.target
+After=network.target
+
+[Service]
+User={{ steamcmd_user }}
+Group={{ steamcmd_user }}
+WorkingDirectory={{ steamcmd_server_directory }}
+ExecStartPre={{ steamcmd_server_directory }}/palworld-maintenance.sh
+ExecStart={{ steamcmd_server_directory }}/PalServer.sh {{ palworld_systemd_service_settings.palworld_advanced_options }} -port={{ firewall_palworld_port }}
+Restart={{ palworld_systemd_service_settings.restart_policy }}
+RestartSec={{ palworld_systemd_service_settings.restart_waiting_policy }}
+RuntimeMaxSec={{ palworld_systemd_service_settings.max_runtime }}
+MemoryMax={{ palworld_systemd_service_settings.max_memory }}
+
+[Install]
+WantedBy=multi-user.target

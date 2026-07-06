@@ -1,0 +1,11 @@
+---
+# firewall settings — distro-neutral port definitions used by all firewall drivers
+
+firewall_palworld_port: 8211
+firewall_palworld_protocol: udp
+firewall_ssh_port: 22
+firewall_extra_ports: []
+# firewall_extra_ports:
+#   - { port: 25575, protocol: tcp }   # (optional) allow remote control (RCON)
+#   - { port: 27015, protocol: udp }   # (optional) allow steam authentication
+#   - { port: 27015, protocol: tcp }   # (optional) allow steam authentication

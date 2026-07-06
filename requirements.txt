@@ -1,0 +1,2 @@
+# required for ansible's password_hash filter (used to hash user passwords)
+passlib==1.7.4

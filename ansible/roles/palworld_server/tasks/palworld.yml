@@ -1,25 +1,25 @@
 ---
 # palworld tasks
+
+- name: palworld > create server directory
+  ansible.builtin.file:
+    path: '{{ steamcmd_server_directory }}'
+    state: directory
+    owner: '{{ steamcmd_user }}'
+    group: '{{ steamcmd_user_group }}'
+    mode: '0750'
+  become: true
+
 - name: palworld > download palworld dedicated server via steamcmd
   ansible.builtin.command: >
     {{ steamcmd_download_command }}
   args:
-    chdir: '{{ steamcmd_user_home }}'
+    chdir: '{{ steamcmd_server_directory }}'
   become: true
   become_user: '{{ steamcmd_user }}'
   changed_when: false
-
-- name: palworld > create symbolic links for sdk32 and sdk64
-  ansible.builtin.file:
-    src: '{{ item.src }}'
-    dest: '{{ item.dest }}'
-    state: link
-    owner: '{{ steamcmd_user }}'
-    group: '{{ steamcmd_user_group }}'
-    follow: false
-  loop:
-    - { src: '{{ steamcmd_user_home }}/.steam/steam/steamcmd/linux32', dest: '{{ steamcmd_user_home }}/.steam/sdk32' }
-    - { src: '{{ steamcmd_user_home }}/.steam/steam/steamcmd/linux64', dest: '{{ steamcmd_user_home }}/.steam/sdk64' }
+  environment:
+    HOME: '{{ steamcmd_user_home }}'
 
 - name: palworld > check if saved directory exists
   ansible.builtin.stat:
@@ -30,11 +30,13 @@
   ansible.builtin.command: >
     timeout 20s ./PalServer.sh -useperfthreads -NoAsyncLoadingThread -UseMultithreadForDS
   args:
-    chdir: '{{ palworld_home_directory }}'
+    chdir: '{{ steamcmd_server_directory }}'
   become: true
   become_user: '{{ steamcmd_user }}'
   changed_when: false
   failed_when: false  # (timeout rc == 124)
+  environment:
+    HOME: '{{ steamcmd_user_home }}'
   when: not __palworld_saved_dir_exists.stat.exists
 
 - name: palworld > retrieve palworld.service status
@@ -69,12 +71,17 @@
 - name: palworld > create/modify palworld-maintenance.sh
   ansible.builtin.template:
     src: templates/palworld_maintenance_script.j2
-    dest: '{{ steamcmd_user_home }}/palworld-maintenance.sh'
-    mode: '0755'
+    dest: '{{ steamcmd_server_directory }}/palworld-maintenance.sh'
+    owner: '{{ steamcmd_user }}'
+    group: '{{ steamcmd_user_group }}'
+    mode: '0750'
   register: __template_palworld_maintenance_script_status
 
 - name: palworld > reload daemon to make sure systemd has read any changes
   ansible.builtin.systemd_service:
     name: palworld
     daemon_reload: true
-  when: __template_palworld_systemd_status.changed or __template_palworld_settings_status.changed or __template_palworld_maintenance_script_status
+  when: >
+    __template_palworld_systemd_status.changed or
+    __template_palworld_settings_status.changed or
+    __template_palworld_maintenance_script_status.changed

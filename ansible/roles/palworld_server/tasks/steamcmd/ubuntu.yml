@@ -1,0 +1,39 @@
+---
+# steamcmd tasks for ubuntu
+
+# - name: steamcmd > install lib32gcc-s1
+#   ansible.builtin.apt:
+#    name: lib32gcc-s1
+#    state: present
+
+# - name: steamcmd > install lib32stdc++6
+#   ansible.builtin.apt:
+#    name: lib32stdc++6
+#    state: present
+
+- name: steamcmd > configure debconf for steamcmd (accept license)
+  ansible.builtin.debconf:
+    name: steamcmd
+    question: '{{ item.question }}'
+    value: '{{ item.value }}'
+    vtype: '{{ item.vtype }}'
+  loop:
+    - { question: "steam/question", value: "I AGREE", vtype: "select" }
+    - { question: "steam/license", value: "", vtype: "note" }
+  become: true
+
+- name: steamcmd > install steamcmd
+  ansible.builtin.apt:
+    name: steamcmd
+    state: present
+  become: true
+
+- name: steamcmd > create '{{ steamcmd_user }}' user
+  ansible.builtin.user:
+    name: '{{ steamcmd_user }}'
+    home: '{{ steamcmd_user_home }}'
+    shell: /bin/bash
+    create_home: true
+    password: "{{ steamcmd_user_password | ansible.builtin.password_hash('sha512') }}"
+    password_lock: false
+  become: true
