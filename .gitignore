@@ -1,10 +1,22 @@
-# ingore local .terraform directory
+# Terraform
 **/.terraform/*
-# ignore Terraform state files
 *.tfstate
 *.tfstate.*
-# ignore variables files
 *.tfvars
+!*.tfvars.example
+crash.log
 
-# vscode
+# Ansible
+*.retry
+
+# Editors
 .vscode/*
+.idea/
+
+# ansible-lint cache
+.ansible/
+
+# locally installed agent skills (npx skills add)
+.agents/
+.claude/skills/
+skills-lock.json
