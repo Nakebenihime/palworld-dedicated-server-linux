@@ -1,0 +1,6 @@
+---
+collections:
+  - name: cloud.terraform # terraform_provider dynamic inventory plugin
+    version: ">=3.0.0,<4.0.0"
+  - name: community.general # ufw module (firewall role)
+    version: ">=8.0.0,<12.0.0"

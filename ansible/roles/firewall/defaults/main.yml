@@ -1,0 +1,16 @@
+---
+# Default posture: deny everything inbound, allow everything outbound.
+firewall_default_policies:
+  - { policy: deny, direction: incoming }
+  - { policy: allow, direction: outgoing }
+
+# Inbound rules. Override the whole list in group_vars to open extra ports.
+# NOTE: rules removed from this list are NOT purged from a host that already
+# has them — delete them manually (ufw status numbered && ufw delete <n>).
+firewall_rules:
+  - { port: "22", proto: tcp, rule: allow, comment: "SSH" }
+  - { port: "8211", proto: udp, rule: allow, comment: "Palworld game traffic" }
+  # optional extras:
+  # - { port: "25575", proto: tcp, rule: allow, comment: "Palworld RCON" }
+  # - { port: "27015", proto: udp, rule: allow, comment: "Steam server browser" }
+  # - { port: "27015", proto: tcp, rule: allow, comment: "Steam server browser" }

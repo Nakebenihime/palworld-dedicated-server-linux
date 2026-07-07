@@ -1,0 +1,4 @@
+---
+# Keep this list as small as possible — it applies to every contribution.
+skip_list:
+  - yaml[line-length]

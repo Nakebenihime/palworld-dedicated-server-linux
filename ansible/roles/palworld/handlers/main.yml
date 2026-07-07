@@ -1,0 +1,10 @@
+---
+- name: Reload systemd
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: Restart palworld
+  ansible.builtin.systemd_service:
+    name: "{{ palworld_service_name }}"
+    state: restarted
+  when: palworld_service_state == 'started'

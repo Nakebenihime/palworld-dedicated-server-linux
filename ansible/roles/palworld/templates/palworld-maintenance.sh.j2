@@ -1,0 +1,17 @@
+#!/bin/bash
+# {{ ansible_managed }}
+# Runs before every palworld.service start (ExecStartPre):
+# update the server, back up the saves, prune old backups.
+set -euo pipefail
+
+# keep the server up to date
+{{ palworld_steamcmd_binary }} +login anonymous +app_update {{ palworld_app_id }} validate +quit
+
+# back up the save data
+mkdir -p "{{ palworld_backup_directory }}"
+if [ -d "{{ palworld_save_directory }}" ]; then
+    tar -czf "{{ palworld_backup_directory }}/palworld_$(date '+%Y-%m-%d_%H-%M-%S').tar.gz" "{{ palworld_save_directory }}"
+fi
+
+# prune backups older than the retention window
+find "{{ palworld_backup_directory }}" -mtime +{{ palworld_backup_retention_days }} -type f -delete

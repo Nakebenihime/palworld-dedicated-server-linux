@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: nakebenihime
+  description: Installs steamcmd and creates the dedicated steam user
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - palworld
+    - steam
+
+dependencies: []

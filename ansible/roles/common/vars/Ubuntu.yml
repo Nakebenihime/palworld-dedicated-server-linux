@@ -1,0 +1,10 @@
+---
+# Ubuntu: steamcmd lives in the multiverse component.
+common_apt_extra_repositories:
+  - "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }} multiverse"
+  - "deb http://archive.ubuntu.com/ubuntu {{ ansible_distribution_release }}-updates multiverse"
+  - "deb http://security.ubuntu.com/ubuntu {{ ansible_distribution_release }}-security multiverse"
+
+common_prerequisite_packages:
+  - software-properties-common
+  - sudo

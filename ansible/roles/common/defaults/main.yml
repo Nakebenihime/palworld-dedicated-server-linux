@@ -1,0 +1,7 @@
+---
+# Perform a full package upgrade during OS preparation.
+common_upgrade_packages: true
+
+# Seconds to wait for the package manager lock (cloud-init/unattended-upgrades
+# often hold it right after boot).
+common_package_lock_timeout: 300

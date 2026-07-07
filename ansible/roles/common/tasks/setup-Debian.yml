@@ -1,0 +1,42 @@
+---
+# OS preparation for the Debian family (Debian, Ubuntu).
+- name: Update apt cache
+  ansible.builtin.apt:
+    update_cache: true
+    lock_timeout: "{{ common_package_lock_timeout }}"
+
+- name: Upgrade apt packages
+  ansible.builtin.apt:
+    upgrade: safe
+    lock_timeout: "{{ common_package_lock_timeout }}"
+  when: common_upgrade_packages | bool
+
+- name: Install prerequisite packages
+  ansible.builtin.apt:
+    name: "{{ common_prerequisite_packages }}"
+    state: present
+    lock_timeout: "{{ common_package_lock_timeout }}"
+
+- name: Enable extra apt repositories
+  ansible.builtin.apt_repository:
+    repo: "{{ item }}"
+    state: present
+  loop: "{{ common_apt_extra_repositories }}"
+  register: __common_repositories
+
+- name: Check enabled foreign architectures
+  ansible.builtin.command: dpkg --print-foreign-architectures
+  register: __common_foreign_architectures
+  changed_when: false
+
+- name: Enable i386 architecture (required by steamcmd)
+  ansible.builtin.command: dpkg --add-architecture i386
+  register: __common_i386
+  changed_when: true
+  when: "'i386' not in __common_foreign_architectures.stdout_lines"
+
+- name: Update apt cache after repository or architecture changes # noqa: no-handler
+  ansible.builtin.apt:
+    update_cache: true
+    lock_timeout: "{{ common_package_lock_timeout }}"
+  when: __common_repositories is changed or __common_i386 is changed

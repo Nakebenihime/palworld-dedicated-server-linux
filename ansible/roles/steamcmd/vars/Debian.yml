@@ -1,0 +1,8 @@
+---
+# Debian family (Debian, Ubuntu): steamcmd is packaged (non-free/multiverse,
+# enabled by the 'common' role).
+steamcmd_packages:
+  - steamcmd
+
+# Path of the steamcmd executable installed by the package.
+steamcmd_binary: /usr/games/steamcmd

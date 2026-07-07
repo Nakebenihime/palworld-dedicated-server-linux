@@ -1,0 +1,24 @@
+# Copy to terraform.tfvars (git-ignored) and adjust, or export TF_VAR_* env vars.
+# The token is REQUIRED; everything else has sensible defaults.
+
+# Preferred over putting the token in a file:
+#   export TF_VAR_do_token="dop_v1_..."
+# do_token = "dop_v1_..."
+
+# Name of the SSH public key uploaded to your DigitalOcean account.
+# ssh_key_name = "palworld-pub-key"
+
+# project_name        = "palworld-dedicated-server"
+# project_description = "Palworld dedicated server provisioned with Terraform and configured with Ansible."
+# project_purpose     = "Palworld dedicated server to play with my friends"
+
+# droplet_name    = "palworld-dedicated-server"
+# droplet_image   = "debian-12-x64"   # or ubuntu-24-04-x64 / ubuntu-22-04-x64
+# droplet_region  = "ams3"
+# droplet_size    = "s-4vcpu-8gb-amd" # Palworld needs ~8 GB RAM
+# droplet_tags    = ["palworld", "game-server"]
+# droplet_backups = false
+
+# ansible_user    = "root"
+# ansible_ssh_key = "~/.ssh/id_ed25519"
+# ansible_python  = "/usr/bin/python3"
