@@ -1,0 +1,7 @@
+---
+# Dynamic inventory: reads the ansible_host resource from this provider's
+# Terraform state. project_path is resolved relative to the working directory,
+# so always run Ansible from the repository root (the Makefile does).
+# TODO(7): update project_path to terraform/providers/<your-provider-name>
+plugin: cloud.terraform.terraform_provider
+project_path: terraform/providers/_template
