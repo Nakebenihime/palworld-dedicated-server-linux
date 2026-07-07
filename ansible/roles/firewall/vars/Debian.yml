@@ -1,0 +1,8 @@
+---
+# Debian family (Debian, Ubuntu) uses ufw. A new distribution family plugs in
+# by providing its own vars file selecting another backend (e.g.
+# firewall_backend: firewalld) and the matching tasks/<backend>.yml.
+firewall_backend: ufw
+
+firewall_packages:
+  - ufw

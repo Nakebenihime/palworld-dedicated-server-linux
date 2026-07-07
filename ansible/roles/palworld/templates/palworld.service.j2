@@ -1,0 +1,17 @@
+# {{ ansible_managed }}
+[Unit]
+Description={{ palworld_systemd.description }}
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User={{ palworld_user }}
+ExecStartPre={{ palworld_user_home }}/palworld-maintenance.sh
+ExecStart={{ palworld_home_directory }}/PalServer.sh {{ palworld_systemd.advanced_options }} -port={{ palworld_public_port }}
+Restart={{ palworld_systemd.restart_policy }}
+RestartSec={{ palworld_systemd.restart_sec }}
+RuntimeMaxSec={{ palworld_systemd.runtime_max_sec }}
+MemoryMax={{ palworld_systemd.memory_max }}
+
+[Install]
+WantedBy=multi-user.target

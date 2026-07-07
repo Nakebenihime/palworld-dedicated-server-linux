@@ -1,0 +1,17 @@
+---
+# Distro dispatch — the same pattern is used by every role that has
+# OS-specific behavior. To support a new distribution, add the matching
+# vars/<name>.yml and tasks/setup-<os_family>.yml files; nothing else changes.
+- name: Load distribution-specific variables
+  ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+      paths:
+        - "{{ role_path }}/vars"
+
+- name: Run OS-family specific setup
+  ansible.builtin.include_tasks: "setup-{{ ansible_os_family }}.yml"

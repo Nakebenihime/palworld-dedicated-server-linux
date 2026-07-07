@@ -1,0 +1,5 @@
+---
+# Dedicated system user the game server runs as. Created with a locked
+# password: access is only possible via SSH keys (root) + become.
+steamcmd_user: steam
+steamcmd_user_home: "/home/{{ steamcmd_user }}"

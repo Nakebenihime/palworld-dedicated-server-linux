@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: nakebenihime
+  description: OS preparation (package upgrades, repositories, i386 architecture) for the Palworld server
+  license: MIT
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+    - name: Ubuntu
+      versions:
+        - jammy
+        - noble
+  galaxy_tags:
+    - palworld
+    - system
+
+dependencies: []

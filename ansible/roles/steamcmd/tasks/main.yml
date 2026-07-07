@@ -1,0 +1,22 @@
+---
+- name: Load distribution-specific variables
+  ansible.builtin.include_vars: "{{ lookup('ansible.builtin.first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+      paths:
+        - "{{ role_path }}/vars"
+
+- name: Install steamcmd
+  ansible.builtin.include_tasks: "install-{{ ansible_os_family }}.yml"
+
+- name: Create dedicated steam user
+  ansible.builtin.user:
+    name: "{{ steamcmd_user }}"
+    home: "{{ steamcmd_user_home }}"
+    shell: /bin/bash # steamcmd needs a real shell; login stays impossible (locked password + key-only SSH)
+    create_home: true
+    password_lock: true

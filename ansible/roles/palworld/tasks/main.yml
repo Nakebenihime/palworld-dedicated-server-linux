@@ -1,0 +1,90 @@
+---
+- name: Enforce the password policy
+  ansible.builtin.assert:
+    that: >-
+      palworld_allow_empty_passwords | bool
+      or (palworld_settings.server_password | length > 0
+          and palworld_settings.admin_password | length > 0)
+    fail_msg: >-
+      server_password and/or admin_password are empty. Set
+      palworld_server_password and palworld_admin_password in
+      ansible/group_vars/palworld.yml (generate with: openssl rand -base64 15),
+      or set palworld_allow_empty_passwords: true to knowingly run a public,
+      password-less server.
+    quiet: true
+
+- name: Download/update the Palworld dedicated server via steamcmd
+  ansible.builtin.command: >-
+    {{ palworld_steamcmd_binary }} +login anonymous
+    +app_update {{ palworld_app_id }} validate +quit
+  args:
+    chdir: "{{ palworld_user_home }}"
+  become: true
+  become_user: "{{ palworld_user }}"
+  changed_when: false # steamcmd decides itself whether an update is needed
+
+- name: Create sdk32/sdk64 symbolic links required by the server
+  ansible.builtin.file:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    state: link
+    owner: "{{ palworld_user }}"
+    group: "{{ palworld_user }}"
+    follow: false
+  loop:
+    - src: "{{ palworld_user_home }}/.steam/steam/steamcmd/linux32"
+      dest: "{{ palworld_user_home }}/.steam/sdk32"
+    - src: "{{ palworld_user_home }}/.steam/steam/steamcmd/linux64"
+      dest: "{{ palworld_user_home }}/.steam/sdk64"
+
+- name: Check whether the save directory already exists
+  ansible.builtin.stat:
+    path: "{{ palworld_save_directory }}"
+  register: __palworld_save_directory
+
+- name: Start the server once to generate its default configuration files
+  ansible.builtin.command: >-
+    timeout 20s ./PalServer.sh {{ palworld_systemd.advanced_options }}
+  args:
+    chdir: "{{ palworld_home_directory }}"
+  become: true
+  become_user: "{{ palworld_user }}"
+  changed_when: false
+  failed_when: false # timeout exits with rc 124 by design
+  when: not __palworld_save_directory.stat.exists
+
+- name: Render PalWorldSettings.ini
+  ansible.builtin.template:
+    src: palworld_settings.ini.j2
+    dest: "{{ palworld_settings_file }}"
+    owner: "{{ palworld_user }}"
+    group: "{{ palworld_user }}"
+    mode: "0640" # contains the server/admin passwords
+    follow: false
+  notify: Restart palworld
+
+- name: Render the maintenance (update + backup) script
+  ansible.builtin.template:
+    src: palworld-maintenance.sh.j2
+    dest: "{{ palworld_user_home }}/palworld-maintenance.sh"
+    owner: "{{ palworld_user }}"
+    group: "{{ palworld_user }}"
+    mode: "0755"
+
+- name: Render the systemd service unit
+  ansible.builtin.template:
+    src: palworld.service.j2
+    dest: "/etc/systemd/system/{{ palworld_service_name }}.service"
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart palworld
+
+- name: Apply pending handlers before managing the service state
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable and start the palworld service
+  ansible.builtin.systemd_service:
+    name: "{{ palworld_service_name }}"
+    enabled: "{{ palworld_service_enabled }}"
+    state: "{{ palworld_service_state }}"

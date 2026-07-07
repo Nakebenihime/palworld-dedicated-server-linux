@@ -1,0 +1,43 @@
+---
+# =============================================================================
+# User-facing configuration for all Palworld servers (inventory group
+# 'palworld'). Anything here overrides the role defaults, so this is the ONLY
+# file most users ever need to touch. Full reference: the roles'
+# defaults/main.yml files and the README parameter tables.
+# =============================================================================
+
+# --- passwords (REQUIRED) ----------------------------------------------------
+# The deployment fails fast if these are empty. Generate strong values with:
+#   openssl rand -base64 15
+palworld_server_password: ""
+palworld_admin_password: ""
+
+# To knowingly run a public, password-less server instead, uncomment:
+# palworld_allow_empty_passwords: true
+
+# --- server identity ---------------------------------------------------------
+# palworld_server_name: "Palworld Dedicated Server on Linux"
+# palworld_server_description: "Deployed with Terraform and Ansible."
+
+# --- most-used gameplay tweaks (see roles/palworld/defaults/main.yml) --------
+# Only the keys you set here are overridden; everything else keeps its default.
+# palworld_settings_overrides:
+#   exp_rate: 1.0
+#   pal_capture_rate: 1.0
+#   death_penalty: All            # None|Item|ItemAndEquipment|All
+#   server_player_max_num: 32
+
+# --- RCON (opt-in) -----------------------------------------------------------
+# 1) enable it in the game settings:
+# palworld_settings_overrides:
+#   rcon_enabled: True
+# 2) and open its port in the firewall:
+# firewall_rules:
+#   - { port: "22", proto: tcp, rule: allow, comment: "SSH" }
+#   - { port: "8211", proto: udp, rule: allow, comment: "Palworld game traffic" }
+#   - { port: "25575", proto: tcp, rule: allow, comment: "Palworld RCON" }
+
+# --- service & maintenance ---------------------------------------------------
+# palworld_service_enabled: true
+# palworld_service_state: started
+# palworld_backup_retention_days: 5
