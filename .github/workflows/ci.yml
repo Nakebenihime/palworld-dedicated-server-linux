@@ -14,11 +14,13 @@ jobs:
   # directory is linted automatically — no workflow changes needed.
   # `_template` is deliberately included: the skeleton must never rot.
   discover-providers:
-    runs-on: ubuntu-latest
+    # Pinned runner image tag (what ubuntu-latest currently resolves to) so
+    # the CI environment only changes when we choose to bump it.
+    runs-on: ubuntu-24.04
     outputs:
       providers: ${{ steps.matrix.outputs.providers }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - id: matrix
         run: |
           providers=$(find terraform/providers -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort | jq -R . | jq -sc .)
@@ -27,15 +29,15 @@ jobs:
 
   terraform:
     needs: discover-providers
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         provider: ${{ fromJSON(needs.discover-providers.outputs.providers) }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
         with:
           terraform_wrapper: false
 
@@ -56,7 +58,7 @@ jobs:
           if [ -d tests ]; then terraform test; else echo "no tests directory, skipping"; fi
         working-directory: terraform/providers/${{ matrix.provider }}
 
-      - uses: terraform-linters/setup-tflint@v4
+      - uses: terraform-linters/setup-tflint@v6
 
       - name: tflint
         working-directory: terraform/providers/${{ matrix.provider }}
@@ -65,11 +67,11 @@ jobs:
           tflint --config "${GITHUB_WORKSPACE}/terraform/.tflint.hcl"
 
   terraform-module-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: hashicorp/setup-terraform@v3
+      - uses: hashicorp/setup-terraform@v4
         with:
           terraform_wrapper: false
 
@@ -80,9 +82,9 @@ jobs:
         working-directory: terraform/modules/ansible-inventory
 
   ansible-lint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Install ansible-lint (includes ansible-core)
         run: pip install "ansible-lint>=24.0.0"
@@ -99,8 +101,8 @@ jobs:
           ANSIBLE_CONFIG: ansible/ansible.cfg
 
   yamllint:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: yamllint
         run: pipx run yamllint .
