@@ -14,9 +14,9 @@ jobs:
   # directory is linted automatically — no workflow changes needed.
   # `_template` is deliberately included: the skeleton must never rot.
   discover-providers:
-    # Pinned runner image tag (what ubuntu-latest currently resolves to) so
-    # the CI environment only changes when we choose to bump it.
-    runs-on: ubuntu-24.04
+    # Pinned runner image tag so the CI environment only changes when we
+    # choose to bump it. 26.04 is ahead of ubuntu-latest (currently 24.04).
+    runs-on: ubuntu-26.04
     outputs:
       providers: ${{ steps.matrix.outputs.providers }}
     steps:
@@ -29,7 +29,7 @@ jobs:
 
   terraform:
     needs: discover-providers
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     strategy:
       fail-fast: false
       matrix:
@@ -67,7 +67,7 @@ jobs:
           tflint --config "${GITHUB_WORKSPACE}/terraform/.tflint.hcl"
 
   terraform-module-test:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
 
@@ -82,7 +82,7 @@ jobs:
         working-directory: terraform/modules/ansible-inventory
 
   ansible-lint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
 
@@ -101,7 +101,7 @@ jobs:
           ANSIBLE_CONFIG: ansible/ansible.cfg
 
   yamllint:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7
       - name: yamllint
