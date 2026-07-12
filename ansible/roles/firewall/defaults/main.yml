@@ -8,8 +8,8 @@ firewall_default_policies:
 # NOTE: rules removed from this list are NOT purged from a host that already
 # has them — delete them manually (ufw status numbered && ufw delete <n>).
 firewall_rules:
-  - { port: "22", proto: tcp, rule: allow, comment: "SSH" }
-  - { port: "8211", proto: udp, rule: allow, comment: "Palworld game traffic" }
+  - { port: "22", proto: tcp, rule: allow, comment: "SSH TRAFFIC" }
+  - { port: "8211", proto: udp, rule: allow, comment: "GAME TRAFFIC" }
   # optional extras:
   # - { port: "25575", proto: tcp, rule: allow, comment: "Palworld RCON" }
   # - { port: "27015", proto: udp, rule: allow, comment: "Steam server browser" }
