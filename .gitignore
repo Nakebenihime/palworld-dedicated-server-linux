@@ -1,22 +1,26 @@
-# Terraform
+# terraform
 **/.terraform/*
 *.tfstate
 *.tfstate.*
 *.tfvars
 !*.tfvars.example
 crash.log
+**/.terraform.lock.hcl
 
-# Ansible
+# ansible
 *.retry
 
-# Editors
+# editors
 .vscode/*
 .idea/
 
 # ansible-lint cache
 .ansible/
 
-# Claude Code configuration
+# claude code configuration
 .claude/*
 .agents/*
 skills-lock.json
+
+# python virtual environment
+.venv/
