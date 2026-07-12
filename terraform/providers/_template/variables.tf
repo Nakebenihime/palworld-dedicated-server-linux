@@ -13,8 +13,8 @@
 
 # TODO(6): add your provider-specific variables (region, size, image...) with
 # sensible defaults, keeping declarations in alphabetical order. Keep the
-# image default on a distribution supported by the Ansible roles (Debian 12,
-# Ubuntu 22.04/24.04).
+# image default on a distribution supported by the Ansible roles (Debian 13,
+# Ubuntu 22.04/24.04/26.04).
 
 # --- ansible connection (provider contract — keep these as-is) -----------------
 

@@ -7,11 +7,12 @@ galaxy_info:
   platforms:
     - name: Debian
       versions:
-        - bookworm
+        - trixie
     - name: Ubuntu
       versions:
         - jammy
         - noble
+        - resolute
   galaxy_tags:
     - palworld
     - security

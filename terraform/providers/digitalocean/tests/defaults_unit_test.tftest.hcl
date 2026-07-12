@@ -18,8 +18,8 @@ run "creates_droplet_with_supported_defaults" {
   command = plan
 
   assert {
-    condition     = digitalocean_droplet.palworld.image == "debian-12-x64"
-    error_message = "Default image must be a distribution supported by the Ansible roles (debian-12-x64)"
+    condition     = digitalocean_droplet.palworld.image == "debian-13-x64"
+    error_message = "Default image must be a distribution supported by the Ansible roles (debian-13-x64)"
   }
 
   assert {
