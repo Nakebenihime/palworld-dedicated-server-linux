@@ -16,7 +16,7 @@ crash.log
 # ansible-lint cache
 .ansible/
 
-# locally installed agent skills (npx skills add)
-.agents/
-.claude/skills/
+# Claude Code configuration
+.claude/*
+.agents/*
 skills-lock.json
