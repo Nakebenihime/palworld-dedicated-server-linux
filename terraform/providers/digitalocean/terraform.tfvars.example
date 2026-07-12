@@ -13,7 +13,7 @@
 # project_purpose     = "Palworld dedicated server to play with my friends"
 
 # droplet_name    = "palworld-dedicated-server"
-# droplet_image   = "debian-12-x64"   # or ubuntu-24-04-x64 / ubuntu-22-04-x64
+# droplet_image   = "debian-13-x64"   # or ubuntu-26-04-x64 / ubuntu-24-04-x64 / ubuntu-22-04-x64
 # droplet_region  = "ams3"
 # droplet_size    = "s-4vcpu-8gb-amd" # Palworld needs ~8 GB RAM
 # droplet_tags    = ["palworld", "game-server"]

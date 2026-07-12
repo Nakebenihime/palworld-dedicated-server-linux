@@ -34,9 +34,9 @@ variable "droplet_backups" {
 }
 
 variable "droplet_image" {
-  description = "Droplet OS image slug. Supported by the Ansible roles: debian-12-x64, ubuntu-24-04-x64, ubuntu-22-04-x64."
+  description = "Droplet OS image slug. Supported by the Ansible roles: debian-13-x64, ubuntu-26-04-x64, ubuntu-24-04-x64, ubuntu-22-04-x64."
   type        = string
-  default     = "debian-12-x64"
+  default     = "debian-13-x64"
 }
 
 variable "droplet_name" {

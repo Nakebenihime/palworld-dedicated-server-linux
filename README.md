@@ -15,7 +15,7 @@ The project is built to be extended by the community:
   ready to use; adding Hetzner, OVH, AWS... means copying the
   [`_template`](terraform/providers/_template/) directory and filling in the
   TODOs. See [CONTRIBUTING.md](CONTRIBUTING.md).
-- **Linux distributions are pluggable** — Debian 12 and Ubuntu 22.04/24.04
+- **Linux distributions are pluggable** — Debian 13 and Ubuntu 22.04/24.04/26.04
   are supported out of the box; the Ansible roles select distro-specific
   vars/tasks at runtime, so new distributions are additive files, not edits.
 
@@ -92,7 +92,7 @@ tool can be run (and re-run) on its own.
 Optional tuning: copy
 [`terraform/providers/digitalocean/terraform.tfvars.example`](terraform/providers/digitalocean/terraform.tfvars.example)
 to `terraform.tfvars` in the same directory (region, droplet size, image —
-`debian-12-x64` or `ubuntu-24-04-x64`...).
+`debian-13-x64`, `ubuntu-26-04-x64`, `ubuntu-24-04-x64`...).
 
 ## Everyday usage
 

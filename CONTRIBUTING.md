@@ -39,7 +39,7 @@ register anywhere.
    implementation.
 
 5. **Pick a supported default image**: the Ansible roles currently support
-   Debian 12 and Ubuntu 22.04/24.04.
+   Debian 13 and Ubuntu 22.04/24.04/26.04.
 
 6. **Write credential-free tests** in `tests/*_unit_test.tftest.hcl`: declare a
    `mock_provider` for your cloud and assert your defaults and the contract
