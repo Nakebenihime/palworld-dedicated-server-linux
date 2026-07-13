@@ -25,7 +25,7 @@
     - name: Ufw | Always allow SSH traffic
       community.general.ufw:
         rule: allow
-        port: "22"
+        port: "{{ firewall_ssh_port }}"
         proto: tcp
 
     - name: Ufw | Enable ufw
