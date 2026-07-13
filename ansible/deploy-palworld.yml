@@ -1,0 +1,17 @@
+---
+- name: Deploy Palworld dedicated server
+  hosts: palworld
+  become: true
+  gather_facts: false # gathered manually once the host is reachable
+  pre_tasks:
+    - name: Wait for the host to become reachable
+      ansible.builtin.wait_for_connection:
+        timeout: 300
+
+    - name: Gather facts
+      ansible.builtin.setup:
+  roles:
+    - common
+    - steamcmd
+    - firewall
+    - palworld

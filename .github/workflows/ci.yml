@@ -98,7 +98,7 @@ jobs:
         run: ansible-lint ansible/
 
       - name: playbook syntax check
-        run: ansible-playbook --syntax-check -i localhost, ansible/playbook.yml
+        run: ansible-playbook --syntax-check -i localhost, ansible/deploy-palworld.yml
         env:
           ANSIBLE_CONFIG: ansible/ansible.cfg
 
