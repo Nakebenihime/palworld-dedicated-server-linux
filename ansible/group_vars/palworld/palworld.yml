@@ -1,9 +1,13 @@
 ---
 # =============================================================================
 # User-facing configuration for all Palworld servers (inventory group
-# 'palworld'). Anything here overrides the role defaults, so this is the ONLY
-# file most users ever need to touch. Full reference: the roles'
-# defaults/main.yml files and the README parameter tables.
+# 'palworld'). Every file in this directory overrides the defaults of the role
+# it is named after, so these files are the ONLY place most users ever need to
+# touch. Full reference: the roles' defaults/main.yml files and the README
+# parameter tables.
+#
+# This file steers the 'palworld' role (game server + systemd service) — see
+# ansible/roles/palworld/defaults/main.yml.
 # =============================================================================
 
 # --- passwords (REQUIRED) ----------------------------------------------------
@@ -33,12 +37,9 @@ palworld_admin_password: "{{ lookup('env', 'PALWORLD_ADMIN_PASSWORD') }}"
 # --- RCON (opt-in) -----------------------------------------------------------
 # 1) enable it in the game settings:
 # palworld_settings_overrides:
-#   rcon_enabled: True
-# 2) and open its port in the firewall:
-# firewall_rules:
-#   - { port: "22", proto: tcp, rule: allow, comment: "SSH" }
-#   - { port: "8211", proto: udp, rule: allow, comment: "Palworld game traffic" }
-#   - { port: "25575", proto: tcp, rule: allow, comment: "Palworld RCON" }
+#   rcon_enabled: true
+# 2) and open its port (25575/tcp) in the firewall — see firewall_rules in
+#    firewall.yml. RCON needs both.
 
 # --- service & maintenance ---------------------------------------------------
 # palworld_service_enabled: true

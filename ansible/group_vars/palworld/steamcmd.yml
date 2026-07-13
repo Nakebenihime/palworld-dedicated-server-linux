@@ -1,0 +1,8 @@
+---
+# Overrides for the 'steamcmd' role (installer + dedicated steam user) — full
+# reference: ansible/roles/steamcmd/defaults/main.yml.
+
+# Dedicated system user the game server runs as (the palworld role reuses it
+# automatically):
+# steamcmd_user: steam
+# steamcmd_user_home: "/home/{{ steamcmd_user }}"

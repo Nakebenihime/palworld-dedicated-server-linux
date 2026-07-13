@@ -9,7 +9,7 @@
       server_password and/or admin_password are empty. Export
       PALWORLD_SERVER_PASSWORD and PALWORLD_ADMIN_PASSWORD (generate with:
       openssl rand -base64 15) before deploying — see
-      ansible/group_vars/palworld.yml — or set
+      ansible/group_vars/palworld/palworld.yml — or set
       palworld_allow_empty_passwords: true to knowingly run a public,
       password-less server.
     quiet: true

@@ -35,7 +35,7 @@ palworld_systemd:
 
 # --- passwords -------------------------------------------------------------------
 # Supplied via the PALWORLD_SERVER_PASSWORD / PALWORLD_ADMIN_PASSWORD env vars
-# (see ansible/group_vars/palworld.yml — never commit password values).
+# (see ansible/group_vars/palworld/palworld.yml — never commit password values).
 # Deployment fails fast while they are empty, unless you explicitly accept a
 # password-less public server:
 palworld_server_password: ""
