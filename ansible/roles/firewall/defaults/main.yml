@@ -8,11 +8,16 @@ firewall_default_policies:
   - { policy: deny, direction: incoming }
   - { policy: allow, direction: outgoing }
 
+# SSH port kept open by the default rules AND by the lockout guard that always
+# allows SSH even when firewall_rules is overridden. Change it here if sshd
+# listens on a non-standard port, or the guard protects the wrong port.
+firewall_ssh_port: "22"
+
 # Inbound rules. Override the whole list in group_vars to open extra ports.
 # NOTE: rules removed from this list are NOT purged from a host that already
 # has them — delete them manually (ufw status numbered && ufw delete <n>).
 firewall_rules:
-  - { port: "22", proto: tcp, rule: allow, comment: "SSH TRAFFIC" }
+  - { port: "{{ firewall_ssh_port }}", proto: tcp, rule: allow, comment: "SSH TRAFFIC" }
   - { port: "8211", proto: udp, rule: allow, comment: "GAME TRAFFIC" }
   # optional extras:
   # - { port: "25575", proto: tcp, rule: allow, comment: "Palworld RCON" }
