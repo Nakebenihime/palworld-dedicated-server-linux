@@ -1,10 +1,9 @@
 # `_template` — provider skeleton
 
-Starting point for adding a new cloud provider. It is intentionally
-cloud-free: the server is a `null_resource` placeholder, so the template
-always passes `terraform validate` in CI and can even be `terraform apply`d
-locally (free, no credentials) to test the Terraform → Ansible inventory
-bridge end-to-end.
+Starting point for a new cloud provider — intentionally cloud-free (the
+server is a `null_resource` placeholder), so it always passes
+`terraform validate` in CI and can even be `terraform apply`d locally (free,
+no credentials) to test the Terraform → Ansible inventory bridge end-to-end.
 
 ## Adding a provider
 

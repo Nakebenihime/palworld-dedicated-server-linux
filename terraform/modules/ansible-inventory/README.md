@@ -1,11 +1,11 @@
 # `ansible-inventory` module
 
-Registers a provisioned server in the Terraform state in the form the
+Registers a provisioned server in Terraform state in the form the
 [`cloud.terraform.terraform_provider`](https://github.com/ansible-collections/cloud.terraform)
-dynamic inventory plugin reads back. It is the single bridge between
-Terraform (provisioning) and Ansible (configuration): because every provider
-root instantiates this module, the inventory group name and connection
-variable names can never drift from what `ansible/playbook.yml` expects.
+dynamic inventory plugin reads back — the single bridge between Terraform
+(provisioning) and Ansible (configuration). Every provider root instantiates
+this module, so the inventory group name and connection variable names can
+never drift from what `ansible/deploy-palworld.yml` expects.
 
 Every provider under `terraform/providers/` MUST call this module exactly
 once — see [docs/provider-contract.md](../../../docs/provider-contract.md).

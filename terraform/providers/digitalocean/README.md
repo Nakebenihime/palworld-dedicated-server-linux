@@ -28,10 +28,8 @@ See [`terraform.tfvars.example`](terraform.tfvars.example) for all variables.
 
 ## Notes
 
-- `droplet_image` must be a Debian- or Ubuntu-family slug supported by the
-  Ansible roles (`debian-13-x64`, `ubuntu-26-04-x64`, `ubuntu-24-04-x64`, `ubuntu-22-04-x64`).
-- State is stored locally in this directory by default. For team use,
-  configure a remote backend — see
-  [docs/provider-contract.md](../../../docs/provider-contract.md#remote-state).
-- Always run Terraform/Ansible through the root `Makefile` (it runs from the
-  repository root, which `inventory.yml`'s relative `project_path` relies on).
+| Topic | Detail |
+|-------|--------|
+| Image | `droplet_image` must be a Debian/Ubuntu slug the Ansible roles support (`debian-13-x64`, `ubuntu-26-04-x64`, `ubuntu-24-04-x64`, `ubuntu-22-04-x64`) |
+| State | Local to this directory by default; for team use, configure a [remote backend](../../../docs/provider-contract.md#remote-state) |
+| Running commands | Always go through the root `Makefile` — `inventory.yml`'s relative `project_path` depends on running from the repo root |
