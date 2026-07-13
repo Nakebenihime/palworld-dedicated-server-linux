@@ -9,7 +9,7 @@
 PROVIDER ?= digitalocean
 TF_DIR    := terraform/providers/$(PROVIDER)
 INVENTORY := $(TF_DIR)/inventory.yml
-PLAYBOOK  := ansible/playbook.yml
+PLAYBOOK  := ansible/deploy-palworld.yml
 
 export ANSIBLE_CONFIG := ansible/ansible.cfg
 
