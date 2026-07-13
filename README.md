@@ -76,7 +76,8 @@ tool runs (and re-runs) on its own.
    | `PALWORLD_SERVER_PASSWORD` | Players need this to join |
    | `PALWORLD_ADMIN_PASSWORD` | Admin/RCON password |
 
-   Read by [`ansible/group_vars/palworld.yml`](ansible/group_vars/palworld.yml)
+   Read by
+   [`ansible/group_vars/palworld/palworld.yml`](ansible/group_vars/palworld/palworld.yml)
    at deploy time (swap for `ansible-vault` if you prefer). Set
    `palworld_allow_empty_passwords: true` there to run password-less.
 
@@ -110,7 +111,7 @@ to `terraform.tfvars` in the same directory (region, droplet size, image —
 | `make lint` | run every linter CI runs |
 | `make test` | run the Terraform tests (mocked providers, no credentials) |
 
-Changing game settings later: edit `ansible/group_vars/palworld.yml`, then
+Changing game settings later: edit the files in `ansible/group_vars/palworld/`, then
 `make configure` — the palworld role re-renders the config and restarts the
 service (via handlers) only when something actually changed.
 
@@ -120,9 +121,11 @@ service (via handlers) only when something actually changed.
 ## Configuration reference
 
 All user-facing knobs live in
-[`ansible/group_vars/palworld.yml`](ansible/group_vars/palworld.yml)
-(passwords, server name, gameplay tweaks via `palworld_settings_overrides`,
-firewall rules, backup retention). The full catalogs with defaults:
+[`ansible/group_vars/palworld/`](ansible/group_vars/palworld/) — one file per
+role: `palworld.yml` (passwords, server name, gameplay tweaks via
+`palworld_settings_overrides`, backup retention), `firewall.yml` (SSH port,
+inbound rules), `steamcmd.yml` (steam user) and `common.yml` (OS preparation).
+The full catalogs with defaults:
 
 | Area | File |
 |------|------|

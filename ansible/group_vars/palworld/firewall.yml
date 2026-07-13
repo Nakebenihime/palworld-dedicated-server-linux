@@ -1,0 +1,15 @@
+---
+# Overrides for the 'firewall' role (ufw backend) — full reference:
+# ansible/roles/firewall/defaults/main.yml.
+
+# If sshd listens on a non-standard port. This port is kept open by the default
+# rules AND by the lockout guard, even when firewall_rules is overridden.
+# firewall_ssh_port: "22"
+
+# Inbound rules. Override the whole list to open extra ports, e.g. RCON
+# (which also needs rcon_enabled in palworld.yml):
+# firewall_rules:
+#   - { port: "22", proto: tcp, rule: allow, comment: "SSH" }
+#   - { port: "8211", proto: udp, rule: allow, comment: "Palworld game traffic" }
+#   - { port: "25575", proto: tcp, rule: allow, comment: "Palworld RCON" }
+#   - { port: "27015", proto: udp, rule: allow, comment: "Steam server browser" }

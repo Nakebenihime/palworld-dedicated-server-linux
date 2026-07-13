@@ -1,0 +1,10 @@
+---
+# Overrides for the 'common' role (OS preparation) — full reference:
+# ansible/roles/common/defaults/main.yml.
+
+# Skip the full package upgrade during OS preparation:
+# common_upgrade_packages: false
+
+# Seconds to wait for the package manager lock (cloud-init/unattended-upgrades
+# often hold it right after boot):
+# common_package_lock_timeout: 300
