@@ -1,33 +1,33 @@
 ---
-- name: Install firewall packages
+- name: Ufw | Install firewall packages
   ansible.builtin.package:
     name: "{{ firewall_packages }}"
     state: present
 
-- name: Configure ufw policies and rules
+- name: Ufw | Configure ufw policies and rules
   block:
-    - name: Set default policies
+    - name: Ufw | Set default policies
       community.general.ufw:
-        policy: "{{ item.policy }}"
-        direction: "{{ item.direction }}"
+        policy: "{{ item['policy'] }}"
+        direction: "{{ item['direction'] }}"
       loop: "{{ firewall_default_policies }}"
 
-    - name: Apply firewall rules
+    - name: Ufw | Apply firewall rules
       community.general.ufw:
-        rule: "{{ item.rule }}"
-        port: "{{ item.port }}"
-        proto: "{{ item.proto }}"
-        comment: "{{ item.comment | default(omit) }}"
+        rule: "{{ item['rule'] }}"
+        port: "{{ item['port'] }}"
+        proto: "{{ item['proto'] }}"
+        comment: "{{ item['comment'] | default(omit) }}"
       loop: "{{ firewall_rules }}"
 
   always:
     # Lockout guard: whatever happens above, never cut our own SSH access off.
-    - name: Always allow SSH traffic
+    - name: Ufw | Always allow SSH traffic
       community.general.ufw:
         rule: allow
         port: "22"
         proto: tcp
 
-    - name: Enable ufw
+    - name: Ufw | Enable ufw
       community.general.ufw:
         state: enabled

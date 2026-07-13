@@ -1,41 +1,42 @@
 ---
 # OS preparation for the Debian family (Debian, Ubuntu).
-- name: Update apt cache
+- name: Setup-Debian | Update apt cache
   ansible.builtin.apt:
     update_cache: true
     lock_timeout: "{{ common_package_lock_timeout }}"
 
-- name: Upgrade apt packages
+- name: Setup-Debian | Upgrade apt packages
   ansible.builtin.apt:
     upgrade: safe
     lock_timeout: "{{ common_package_lock_timeout }}"
   when: common_upgrade_packages | bool
 
-- name: Install prerequisite packages
+- name: Setup-Debian | Install prerequisite packages
   ansible.builtin.apt:
     name: "{{ common_prerequisite_packages }}"
     state: present
     lock_timeout: "{{ common_package_lock_timeout }}"
 
-- name: Enable extra apt repositories
+- name: Setup-Debian | Enable extra apt repositories
   ansible.builtin.apt_repository:
     repo: "{{ item }}"
     state: present
   loop: "{{ common_apt_extra_repositories }}"
   register: __common_repositories
 
-- name: Check enabled foreign architectures
+- name: Setup-Debian | Check enabled foreign architectures
   ansible.builtin.command: dpkg --print-foreign-architectures
   register: __common_foreign_architectures
   changed_when: false
+  check_mode: false # read-only query; must run in check mode too, or the next task's condition is undefined
 
-- name: Enable i386 architecture (required by steamcmd)
+- name: Setup-Debian | Enable i386 architecture (required by steamcmd)
   ansible.builtin.command: dpkg --add-architecture i386
   register: __common_i386
   changed_when: true
-  when: "'i386' not in __common_foreign_architectures.stdout_lines"
+  when: "'i386' not in __common_foreign_architectures['stdout_lines']"
 
-- name: Update apt cache after repository or architecture changes # noqa: no-handler
+- name: Setup-Debian | Update apt cache after repository or architecture changes # noqa: no-handler
   ansible.builtin.apt:
     update_cache: true
     lock_timeout: "{{ common_package_lock_timeout }}"

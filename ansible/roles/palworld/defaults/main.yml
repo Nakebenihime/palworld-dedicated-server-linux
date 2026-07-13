@@ -34,7 +34,8 @@ palworld_systemd:
   memory_max: 7G # hard memory cap (tune to your instance size)
 
 # --- passwords -------------------------------------------------------------------
-# Set these in ansible/group_vars/palworld.yml (openssl rand -base64 15).
+# Supplied via the PALWORLD_SERVER_PASSWORD / PALWORLD_ADMIN_PASSWORD env vars
+# (see ansible/group_vars/palworld.yml — never commit password values).
 # Deployment fails fast while they are empty, unless you explicitly accept a
 # password-less public server:
 palworld_server_password: ""
@@ -107,7 +108,7 @@ palworld_settings_defaults:
   admin_password: "{{ palworld_admin_password }}"
   server_password: "{{ palworld_server_password }}"
   public_port: "{{ palworld_public_port }}"
-  public_ip: "{{ ansible_default_ipv4['address'] }}"
+  public_ip: "{{ ansible_facts['default_ipv4']['address'] }}"
   rcon_enabled: false
   rcon_port: 25575
   region: ""
