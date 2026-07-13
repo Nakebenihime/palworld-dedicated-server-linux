@@ -1,4 +1,8 @@
 ---
+# Firewall backend (provider). Defaults to the OS-appropriate backend selected
+# by vars/<distribution>.yml; override in inventory to force another one.
+firewall_backend: "{{ firewall_backend_os_default }}"
+
 # Default posture: deny everything inbound, allow everything outbound.
 firewall_default_policies:
   - { policy: deny, direction: incoming }
