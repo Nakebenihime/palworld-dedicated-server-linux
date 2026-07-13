@@ -67,6 +67,7 @@
     group: "{{ palworld_user }}"
     mode: "0640" # contains the server/admin passwords
     follow: false
+  diff: false # never print the rendered passwords in --diff output
   notify: Restart palworld
 
 - name: Render the maintenance (update + backup) script
