@@ -101,6 +101,8 @@ to `terraform.tfvars` in the same directory (region, droplet size, image —
 |---------|--------|
 | `make help` | list all targets |
 | `make list-providers` | list available providers |
+| `make deps` | install the required Ansible collections |
+| `make init PROVIDER=<p>` | initialize Terraform for the selected provider |
 | `make plan PROVIDER=<p>` | preview infrastructure changes |
 | `make provision PROVIDER=<p>` | create/update the server (terraform apply) |
 | `make configure PROVIDER=<p>` | (re-)run the Ansible configuration — day-2 changes |
@@ -108,6 +110,7 @@ to `terraform.tfvars` in the same directory (region, droplet size, image —
 | `make output PROVIDER=<p>` | show server IP / name |
 | `make destroy PROVIDER=<p>` | tear everything down |
 | `make forget-host PROVIDER=<p>` | drop the server's SSH key from known_hosts |
+| `make fmt` | format all Terraform code |
 | `make lint` | run every linter CI runs |
 | `make test` | run the Terraform tests (mocked providers, no credentials) |
 
