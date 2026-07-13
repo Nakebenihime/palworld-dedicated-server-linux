@@ -1,17 +1,17 @@
 ---
 # The steamcmd package normally prompts for the Steam license agreement;
 # pre-seeding debconf keeps the install non-interactive.
-- name: Accept the Steam license agreement (debconf pre-seed)
+- name: Install-Debian | Accept the Steam license agreement (debconf pre-seed)
   ansible.builtin.debconf:
     name: steamcmd
-    question: "{{ item.question }}"
-    value: "{{ item.value }}"
-    vtype: "{{ item.vtype }}"
+    question: "{{ item['question'] }}"
+    value: "{{ item['value'] }}"
+    vtype: "{{ item['vtype'] }}"
   loop:
     - { question: steam/question, value: I AGREE, vtype: select }
     - { question: steam/license, value: "", vtype: note }
 
-- name: Install steamcmd packages
+- name: Install-Debian | Install steamcmd packages
   ansible.builtin.apt:
     name: "{{ steamcmd_packages }}"
     state: present

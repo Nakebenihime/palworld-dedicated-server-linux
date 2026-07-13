@@ -1,7 +1,7 @@
 ---
 # Debian: steamcmd lives in the non-free component.
 common_apt_extra_repositories:
-  - "deb https://deb.debian.org/debian/ {{ ansible_distribution_release }} contrib non-free"
+  - "deb https://deb.debian.org/debian/ {{ ansible_facts['distribution_release'] }} contrib non-free"
 
 common_prerequisite_packages:
   - sudo
