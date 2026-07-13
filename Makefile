@@ -17,11 +17,11 @@ export ANSIBLE_CONFIG := ansible/ansible.cfg
 .PHONY: help list-providers check-provider deps init plan provision configure \
         deploy destroy output lint fmt test forget-host
 
-help: ## Show this help
-	@awk 'BEGIN {FS = ":.*##"; printf "Usage: make <target> [PROVIDER=<name>]  (default: digitalocean)\n\nTargets:\n"} \
-	  /^[a-zA-Z_-]+:.*?##/ {printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+help:
+	@printf 'Usage: make <target> [PROVIDER=<name>]  (default: digitalocean)\n\nTargets (documented in README.md):\n'
+	@awk -F: '/^[a-zA-Z_-]+:([^=]|$$)/ && !/^check-provider/ {print "  " $$1}' $(MAKEFILE_LIST)
 
-list-providers: ## List available providers
+list-providers:
 	@find terraform/providers -mindepth 1 -maxdepth 1 -type d ! -name '_*' -printf '%f\n' | sort
 
 check-provider:
@@ -31,33 +31,33 @@ check-provider:
 	  $(MAKE) --no-print-directory list-providers; \
 	  exit 1; }
 
-deps: ## Install the required Ansible collections
+deps:
 	ansible-galaxy collection install -r ansible/requirements.yml
 
-init: check-provider ## Initialize Terraform for the selected provider
+init: check-provider
 	terraform -chdir=$(TF_DIR) init
 
-plan: init ## Show the Terraform execution plan
+plan: init
 	terraform -chdir=$(TF_DIR) plan
 
-provision: init ## Create the server (terraform apply)
+provision: init
 	terraform -chdir=$(TF_DIR) apply
 
-configure: check-provider deps ## Configure the server (ansible-playbook)
+configure: check-provider deps
 	ansible-playbook -i $(INVENTORY) $(PLAYBOOK)
 
-deploy: provision configure ## Provision + configure, end to end
+deploy: provision configure
 
-destroy: check-provider ## Destroy the server (terraform destroy)
+destroy: check-provider
 	terraform -chdir=$(TF_DIR) destroy
 
-output: check-provider ## Show Terraform outputs (server IP, name)
+output: check-provider
 	terraform -chdir=$(TF_DIR) output
 
-forget-host: check-provider ## Remove the server's key from known_hosts (after destroy/recreate)
+forget-host: check-provider
 	ssh-keygen -R "$$(terraform -chdir=$(TF_DIR) output -raw server_ipv4)"
 
-test: ## Run terraform tests (mocked/local providers; no credentials needed)
+test:
 	@set -e; for dir in terraform/modules/*/ terraform/providers/*/; do \
 	  if [ -d "$$dir/tests" ]; then \
 	    echo "==> terraform test $$dir"; \
@@ -66,10 +66,10 @@ test: ## Run terraform tests (mocked/local providers; no credentials needed)
 	  fi; \
 	done
 
-fmt: ## Format all Terraform code
+fmt:
 	terraform fmt -recursive terraform/
 
-lint: ## Run all linters (mirrors CI; requires terraform, tflint, ansible-lint, yamllint)
+lint:
 	terraform fmt -check -diff -recursive terraform/
 	@set -e; for dir in terraform/providers/*/; do \
 	  echo "==> validate $$dir"; \
