@@ -10,14 +10,10 @@ make deploy PROVIDER=digitalocean
 
 The project is built to be extended by the community:
 
-- **Cloud providers are pluggable** — each one is a self-contained directory
-  under [`terraform/providers/`](terraform/providers/). DigitalOcean ships
-  ready to use; adding Hetzner, OVH, AWS... means copying the
-  [`_template`](terraform/providers/_template/) directory and filling in the
-  TODOs. See [CONTRIBUTING.md](CONTRIBUTING.md).
-- **Linux distributions are pluggable** — Debian 13 and Ubuntu 22.04/24.04/26.04
-  are supported out of the box; the Ansible roles select distro-specific
-  vars/tasks at runtime, so new distributions are additive files, not edits.
+| Layer | Pluggability |
+|-------|--------------|
+| Cloud providers | Self-contained directory under [`terraform/providers/`](terraform/providers/). DigitalOcean ships ready to use; add Hetzner/OVH/AWS by copying [`_template`](terraform/providers/_template/) and filling in the TODOs — see [CONTRIBUTING.md](CONTRIBUTING.md) |
+| Linux distributions | Debian 13 and Ubuntu 22.04/24.04/26.04 supported out of the box; the Ansible roles select distro-specific vars/tasks at runtime, so new distros are additive files, not edits |
 
 ## How it works
 
@@ -39,8 +35,8 @@ resource into its state (via the shared
 [`ansible-inventory` module](terraform/modules/ansible-inventory/)), and
 Ansible reads it back through the
 [`cloud.terraform.terraform_provider`](https://github.com/ansible-collections/cloud.terraform)
-dynamic inventory plugin. No IP copy-pasting, no generated files, and each
-tool can be run (and re-run) on its own.
+dynamic inventory plugin — no IP copy-pasting, no generated files, and each
+tool runs (and re-runs) on its own.
 
 ## Prerequisites
 
@@ -68,17 +64,21 @@ tool can be run (and re-run) on its own.
    export TF_VAR_do_token="dop_v1_..."
    ```
 
-3. **Set the game passwords** (required — the deploy fails fast without them)
-   in [`ansible/group_vars/palworld.yml`](ansible/group_vars/palworld.yml):
+3. **Set the game passwords** (required — the deploy fails fast without them):
 
-   ```yaml
-   palworld_server_password: "..."   # players need this to join
-   palworld_admin_password: "..."    # admin/RCON password
+   ```bash
+   export PALWORLD_SERVER_PASSWORD="$(openssl rand -base64 15)"
+   export PALWORLD_ADMIN_PASSWORD="$(openssl rand -base64 15)"
    ```
 
-   Generate strong ones with `openssl rand -base64 15`. To knowingly run a
-   public password-less server, set `palworld_allow_empty_passwords: true`
-   instead.
+   | Variable | Purpose |
+   |----------|---------|
+   | `PALWORLD_SERVER_PASSWORD` | Players need this to join |
+   | `PALWORLD_ADMIN_PASSWORD` | Admin/RCON password |
+
+   Read by [`ansible/group_vars/palworld.yml`](ansible/group_vars/palworld.yml)
+   at deploy time (swap for `ansible-vault` if you prefer). Set
+   `palworld_allow_empty_passwords: true` there to run password-less.
 
 4. **Deploy:**
 
@@ -138,14 +138,11 @@ Gameplay keys map 1:1 to the official
 
 ### Service & maintenance behavior
 
-- The game runs as the unprivileged `steam` user under systemd
-  (`palworld.service`), restarted automatically on crash and every 4h
-  (`runtime_max_sec`) to mitigate the server's memory leak.
-- Before every start, `palworld-maintenance.sh` updates the server via
-  steamcmd and archives the save data to `~steam/palworld_backups/`
-  (retention: `palworld_backup_retention_days`, default 5 days).
-- Restoring a backup: stop the service, extract the archive over
-  `.../PalServer/Pal/Saved`, start the service.
+| Aspect | Behavior |
+|--------|----------|
+| Process | Runs as the unprivileged `steam` user under systemd (`palworld.service`); auto-restarts on crash and every 4h (`runtime_max_sec`) to mitigate the server's memory leak |
+| Backups | `palworld-maintenance.sh` updates via steamcmd and archives saves to `~steam/palworld_backups/` before every start (retention: `palworld_backup_retention_days`, default 5 days) |
+| Restore | Stop the service, extract the archive over `.../PalServer/Pal/Saved`, start the service |
 
 ```bash
 ssh root@<server-ip>
@@ -154,50 +151,29 @@ systemctl status palworld     # logs: journalctl -u palworld
 
 ## Security posture
 
-- **Credentials**: cloud tokens are `sensitive = true` Terraform variables,
-  supplied via `TF_VAR_*` env vars or git-ignored `*.tfvars`.
-- **SSH**: key-only auth; trust-on-first-use host key checking
-  (`StrictHostKeyChecking=accept-new`) — a *changed* host key is a hard
-  failure (after destroy/recreate on a recycled IP, run `make forget-host`).
-- **Firewall**: default deny inbound; only 22/tcp (SSH) and 8211/udp (game)
-  are open. RCON (25575/tcp) stays closed unless you opt in.
-- **Game passwords**: the deploy refuses to ship an unprotected server unless
-  you explicitly opt out.
-- **Runtime user**: the game runs as a locked, unprivileged `steam` user.
+| Area | Posture |
+|------|---------|
+| Credentials | Cloud tokens are `sensitive = true` Terraform variables, supplied via `TF_VAR_*` env vars or git-ignored `*.tfvars` |
+| SSH | Key-only auth; trust-on-first-use host key checking (`StrictHostKeyChecking=accept-new`) — a *changed* host key is a hard failure (run `make forget-host` after destroy/recreate on a recycled IP) |
+| Firewall | Default deny inbound; only 22/tcp (SSH) and 8211/udp (game) are open. RCON (25575/tcp) stays closed unless you opt in |
+| Game passwords | The deploy refuses to ship an unprotected server unless you explicitly opt out |
+| Runtime user | The game runs as a locked, unprivileged `steam` user |
 
 ## Extending the project
 
-- **New cloud provider** (Hetzner, OVH, ...): copy
-  [`terraform/providers/_template/`](terraform/providers/_template/), fill in
-  the numbered TODOs, done — the Makefile and CI pick it up automatically.
-  Full guide: [CONTRIBUTING.md](CONTRIBUTING.md) · interface:
-  [docs/provider-contract.md](docs/provider-contract.md).
-- **New distribution** (Fedora, ...): add per-role `vars/` + `tasks/` files
-  keyed on `ansible_os_family` — no shared code changes. Guide:
-  [CONTRIBUTING.md](CONTRIBUTING.md).
+| To add | How |
+|--------|-----|
+| A cloud provider (Hetzner, OVH, ...) | Copy [`terraform/providers/_template/`](terraform/providers/_template/), fill in the numbered TODOs — the Makefile and CI pick it up automatically. Guide: [CONTRIBUTING.md](CONTRIBUTING.md) · interface: [docs/provider-contract.md](docs/provider-contract.md) |
+| A distribution (Fedora, ...) | Add per-role `vars/` + `tasks/` files keyed on `ansible_os_family` — no shared code changes. Guide: [CONTRIBUTING.md](CONTRIBUTING.md) |
 
 ## FAQ
 
-**Can I run Ansible/Terraform directly instead of make?**
-Yes — from the repository root:
-`terraform -chdir=terraform/providers/digitalocean apply` and
-`ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook -i terraform/providers/digitalocean/inventory.yml ansible/playbook.yml`.
-
-**Upgrading from the pre-modular layout?**
-The Terraform layout and resource addresses changed. Destroy the old
-deployment with your **old** checkout (`terraform destroy` in the old
-`terraform/` directory) before deploying with this version — or move your
-state manually if you must keep the server (`terraform state mv`, advanced).
-
-**How do I transfer a world to a new server?**
-Back up on the old server (the maintenance script already does this on every
-service start), copy the archive, extract over `.../PalServer/Pal/Saved` on
-the new one, restart.
-
-**Where is the Terraform state stored?**
-Locally in `terraform/providers/<name>/` (git-ignored). Remote backends are
-supported — see
-[docs/provider-contract.md](docs/provider-contract.md#remote-state).
+| Question | Answer |
+|----------|--------|
+| Can I run Ansible/Terraform directly instead of `make`? | Yes, from the repo root: `terraform -chdir=terraform/providers/digitalocean apply` then `ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook -i terraform/providers/digitalocean/inventory.yml ansible/deploy-palworld.yml` |
+| Upgrading from the pre-modular layout? | Terraform addresses changed — `terraform destroy` with your **old** checkout first, or migrate state manually with `terraform state mv` |
+| How do I transfer a world to a new server? | Back up on the old server (the maintenance script does this on every start), copy the archive, extract over `.../PalServer/Pal/Saved` on the new one, restart |
+| Where is the Terraform state stored? | Locally in `terraform/providers/<name>/` (git-ignored); remote backends are supported — see [Remote state](docs/provider-contract.md#remote-state) |
 
 ## License
 
