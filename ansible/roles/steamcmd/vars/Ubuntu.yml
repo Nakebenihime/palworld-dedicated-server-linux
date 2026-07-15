@@ -1,5 +1,5 @@
 ---
-# Debian: steamcmd is packaged in the non-free component (enabled by the 'common' role).
+# Ubuntu: steamcmd is packaged in the multiverse component (enabled by the 'common' role).
 steamcmd_packages:
   - steamcmd
 

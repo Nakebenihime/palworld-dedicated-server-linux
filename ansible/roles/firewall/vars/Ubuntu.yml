@@ -1,5 +1,5 @@
 ---
-# Debian uses ufw. A new distribution plugs in by providing its own vars file
+# Ubuntu uses ufw. A new distribution plugs in by providing its own vars file
 # selecting another backend default (e.g. firewall_backend_os_default: firewalld)
 # and the matching tasks/<backend>.yml.
 # Users can still force a backend by overriding firewall_backend in inventory.
