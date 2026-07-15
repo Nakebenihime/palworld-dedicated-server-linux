@@ -15,7 +15,9 @@
     quiet: true
 
 # command (not a module): steamcmd is the only supported way to install/update
-# the server; changed status is derived from its output below.
+# the server; changed status is derived from its output below. Retries handle
+# a known intermittent steamcmd bug where a self-restart mid-run can throw
+# "Missing configuration" — simply re-running the command succeeds.
 - name: Download/update the Palworld dedicated server via steamcmd
   ansible.builtin.command: >-
     {{ palworld_steamcmd_binary }} +login anonymous
@@ -26,20 +28,12 @@
   become_user: "{{ palworld_user }}"
   register: __palworld_app_update
   changed_when: "'already up to date' not in __palworld_app_update['stdout']"
-
-- name: Create sdk32/sdk64 symbolic links required by the server
-  ansible.builtin.file:
-    src: "{{ item['src'] }}"
-    dest: "{{ item['dest'] }}"
-    state: link
-    owner: "{{ palworld_user }}"
-    group: "{{ palworld_user }}"
-    follow: false
-  loop:
-    - src: "{{ palworld_user_home }}/.steam/steam/steamcmd/linux32"
-      dest: "{{ palworld_user_home }}/.steam/sdk32"
-    - src: "{{ palworld_user_home }}/.steam/steam/steamcmd/linux64"
-      dest: "{{ palworld_user_home }}/.steam/sdk64"
+  failed_when: >-
+    __palworld_app_update['rc'] != 0 and
+    'Missing configuration' not in __palworld_app_update['stdout']
+  retries: 3
+  delay: 10
+  until: __palworld_app_update['rc'] == 0
 
 - name: Check whether the save directory already exists
   ansible.builtin.stat:
@@ -55,7 +49,7 @@
     chdir: "{{ palworld_home_directory }}"
   become: true
   become_user: "{{ palworld_user }}"
-  changed_when: false
+  changed_when: not __palworld_save_directory['stat']['exists']
   failed_when: false # timeout exits with rc 124 by design
   when: not __palworld_save_directory['stat']['exists']
 
@@ -65,7 +59,7 @@
     dest: "{{ palworld_settings_file }}"
     owner: "{{ palworld_user }}"
     group: "{{ palworld_user }}"
-    mode: "0640" # contains the server/admin passwords
+    mode: "0640"
     follow: false
   diff: false # never print the rendered passwords in --diff output
   notify: Restart palworld
