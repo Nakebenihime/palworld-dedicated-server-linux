@@ -46,74 +46,11 @@ palworld_allow_empty_passwords: false
 palworld_server_name: "Palworld Dedicated Server on LINUX"
 palworld_server_description: "Palworld dedicated server deployed with Terraform and Ansible. https://github.com/Nakebenihime/palworld-dedicated-server-linux"
 
-# --- game settings (https://tech.palworldgame.com/optimize-game-balance) ------------
+# --- game settings -------------------------------------------------------------------
 # Override individual keys via palworld_settings_overrides in group_vars —
-# they are merged over these defaults, so you only list what you change.
+# they are merged over palworld_settings_defaults (vars/main.yml), so you only
+# list what you change. Full reference: https://tech.palworldgame.com/optimize-game-balance
 palworld_settings_overrides: {}
-
-palworld_settings_defaults:
-  difficulty: None
-  day_time_speed_rate: 1.0
-  night_time_speed_rate: 1.0
-  exp_rate: 1.0
-  pal_capture_rate: 1.0
-  pal_spawn_num_rate: 1.0
-  pal_damage_rate_attack: 1.0
-  pal_damage_rate_defense: 1.0
-  player_damage_rate_attack: 1.0
-  player_damage_rate_defense: 1.0
-  player_stomach_decrease_rate: 1.0
-  player_stamina_decrease_rate: 1.0
-  player_auto_hp_regene_rate: 1.0
-  player_auto_hp_regene_rate_in_sleep: 1.0
-  pal_stomach_decrease_rate: 1.0
-  pal_stamina_decrease_rate: 1.0
-  pal_auto_hp_regene_rate: 1.0
-  pal_auto_hp_regene_rate_in_sleep: 1.0
-  build_object_damage_rate: 1.0
-  build_object_deterioration_damage_rate: 1.0
-  collection_drop_rate: 1.0
-  collection_object_hp_rate: 1.0
-  collection_object_respawn_speed_rate: 1.0
-  enemy_drop_item_rate: 1.0
-  death_penalty: All
-  b_enable_player_to_player_damage: false
-  b_enable_friendly_fire: false
-  b_enable_invader_enemy: true
-  b_active_unko: false
-  b_enable_aim_assist_pad: true
-  b_enable_aim_assist_keyboard: false
-  drop_item_max_num: 3000
-  drop_item_max_num_unko: 100
-  base_camp_max_num: 128
-  base_camp_worker_max_num: 15
-  drop_item_alive_max_hours: 1.0
-  b_auto_reset_guild_no_online_players: false
-  auto_reset_guild_time_no_online_players: 72
-  guild_player_max_num: 20
-  pal_egg_default_hatching_time: 72
-  work_speed_rate: 1.0
-  b_is_multiplay: false
-  b_is_pvp: false
-  b_can_pickup_other_guild_death_penalty_drop: false
-  b_enable_non_login_penalty: true
-  b_enable_fast_travel: true
-  b_is_start_location_select_by_map: true
-  b_exist_player_after_logout: false
-  b_enable_defense_other_guild_player: false
-  coop_player_max_num: 4
-  server_player_max_num: 32
-  server_name: "{{ palworld_server_name }}"
-  server_description: "{{ palworld_server_description }}"
-  admin_password: "{{ palworld_admin_password }}"
-  server_password: "{{ palworld_server_password }}"
-  public_port: "{{ palworld_public_port }}"
-  public_ip: "{{ ansible_facts['default_ipv4']['address'] }}"
-  rcon_enabled: false
-  rcon_port: 25575
-  region: ""
-  b_use_auth: true
-  ban_list_url: "https://api.palworldgame.com/api/banlist.txt"
 
 # Effective settings rendered into PalWorldSettings.ini.
 palworld_settings: "{{ palworld_settings_defaults | combine(palworld_settings_overrides) }}"
