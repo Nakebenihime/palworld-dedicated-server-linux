@@ -15,7 +15,7 @@ export ANSIBLE_CONFIG := ansible/ansible.cfg
 
 .DEFAULT_GOAL := help
 .PHONY: help list-providers check-provider deps init plan provision configure \
-        deploy destroy output lint fmt test forget-host
+        deploy destroy output lint fmt test forget-host gen-passwords
 
 help:
 	@printf 'Usage: make <target> [PROVIDER=<name>]  (default: digitalocean)\n\nTargets (documented in README.md):\n'
@@ -68,6 +68,14 @@ test:
 
 fmt:
 	terraform fmt -recursive terraform/
+
+gen-passwords:
+	@SERVER_PW="$$(openssl rand -base64 15)"; \
+	 ADMIN_PW="$$(openssl rand -base64 15)"; \
+	 printf 'export PALWORLD_SERVER_PASSWORD=%s\nexport PALWORLD_ADMIN_PASSWORD=%s\n' \
+	   "$$SERVER_PW" "$$ADMIN_PW"; \
+	 printf '\nGenerated passwords (save these):\n  PALWORLD_SERVER_PASSWORD=%s\n  PALWORLD_ADMIN_PASSWORD=%s\n\n' \
+	   "$$SERVER_PW" "$$ADMIN_PW" >&2
 
 lint:
 	terraform fmt -check -diff -recursive terraform/
