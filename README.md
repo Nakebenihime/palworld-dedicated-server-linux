@@ -5,7 +5,7 @@ Linux in one command, using **Terraform** (provision the server) and
 **Ansible** (configure the OS and the game).
 
 ```bash
-make deploy PROVIDER=digitalocean
+make deploy PROVIDER=<name>
 ```
 
 The project is built to be extended by the community:
@@ -47,24 +47,27 @@ tool runs (and re-runs) on its own.
 | GNU make | any | |
 | An account at a supported provider | | see `make list-providers` |
 
-## Quickstart (DigitalOcean)
+## Quickstart
 
-1. **SSH key** — create one and upload the public key to DigitalOcean
-   (*Settings → Security → SSH keys*) under the name `palworld-pub-key`:
-
-   ```bash
-   ssh-keygen -t ed25519 -f ~/.ssh/id_ed25519
-   ```
-
-2. **API token** — create a
-   [personal access token](https://docs.digitalocean.com/reference/api/create-personal-access-token/)
-   with write scope and export it (never commit it):
+1. **Pick a provider** and follow its README to set up credentials:
 
    ```bash
-   export TF_VAR_do_token="dop_v1_..."
+   make list-providers
    ```
 
-3. **Set the game passwords** (required — the deploy fails fast without them):
+   | Provider | README |
+   |----------|--------|
+   | DigitalOcean | [`terraform/providers/digitalocean/README.md`](terraform/providers/digitalocean/README.md) |
+
+2. **Set the game passwords** (required — the deploy fails fast without them):
+
+   **Option A — via `make` (recommended):**
+
+   ```bash
+   eval $(make gen-passwords)
+   ```
+
+   **Option B — manually:**
 
    ```bash
    export PALWORLD_SERVER_PASSWORD="$(openssl rand -base64 15)"
@@ -81,19 +84,14 @@ tool runs (and re-runs) on its own.
    at deploy time (swap for `ansible-vault` if you prefer). Set
    `palworld_allow_empty_passwords: true` there to run password-less.
 
-4. **Deploy:**
+3. **Deploy:**
 
    ```bash
-   make deploy PROVIDER=digitalocean
+   make deploy PROVIDER=<name>
    ```
 
-5. **Play** — get the IP with `make output PROVIDER=digitalocean`, then
+4. **Play** — get the server IP with `make output PROVIDER=<name>`, then
    connect in-game to `<ip>:8211`.
-
-Optional tuning: copy
-[`terraform/providers/digitalocean/terraform.tfvars.example`](terraform/providers/digitalocean/terraform.tfvars.example)
-to `terraform.tfvars` in the same directory (region, droplet size, image —
-`debian-13-x64`, `ubuntu-26-04-x64`, `ubuntu-24-04-x64`...).
 
 ## Everyday usage
 
@@ -110,6 +108,7 @@ to `terraform.tfvars` in the same directory (region, droplet size, image —
 | `make output PROVIDER=<p>` | show server IP / name |
 | `make destroy PROVIDER=<p>` | tear everything down |
 | `make forget-host PROVIDER=<p>` | drop the server's SSH key from known_hosts |
+| `make gen-passwords` | generate random server and admin passwords |
 | `make fmt` | format all Terraform code |
 | `make lint` | run every linter CI runs |
 | `make test` | run the Terraform tests (mocked providers, no credentials) |
@@ -130,17 +129,14 @@ role: `palworld.yml` (passwords, server name, gameplay tweaks via
 inbound rules), `steamcmd.yml` (steam user) and `common.yml` (OS preparation).
 The full catalogs with defaults:
 
-| Area | File |
-|------|------|
-| Gameplay settings (~60 keys), systemd limits, backups, paths | [`ansible/roles/palworld/defaults/main.yml`](ansible/roles/palworld/defaults/main.yml) |
+| Area | Reference |
+|------|-----------|
+| Game settings (115 keys, descriptions, types, defaults) | [`docs/palworld-settings.md`](docs/palworld-settings.md) |
+| Systemd limits, backups, paths, service behavior | [`ansible/roles/palworld/defaults/main.yml`](ansible/roles/palworld/defaults/main.yml) |
 | Firewall policies & rules | [`ansible/roles/firewall/defaults/main.yml`](ansible/roles/firewall/defaults/main.yml) |
 | Steam user | [`ansible/roles/steamcmd/defaults/main.yml`](ansible/roles/steamcmd/defaults/main.yml) |
 | OS preparation | [`ansible/roles/common/defaults/main.yml`](ansible/roles/common/defaults/main.yml) |
-| Infrastructure (region, size, image, SSH key name) | `terraform/providers/<name>/terraform.tfvars.example` |
-
-Gameplay keys map 1:1 to the official
-[PalWorldSettings.ini options](https://tech.palworldgame.com/optimize-game-balance)
-(`exp_rate` → `ExpRate`, ...).
+| Infrastructure (region, size, image, SSH key name) | `terraform/providers/<name>/README.md` and `terraform.tfvars.example` |
 
 ### Service & maintenance behavior
 
@@ -176,7 +172,7 @@ systemctl status palworld     # logs: journalctl -u palworld
 
 | Question | Answer |
 |----------|--------|
-| Can I run Ansible/Terraform directly instead of `make`? | Yes, from the repo root: `terraform -chdir=terraform/providers/digitalocean apply` then `ANSIBLE_CONFIG=ansible/ansible.cfg ansible-playbook -i terraform/providers/digitalocean/inventory.yml ansible/deploy-palworld.yml` |
+| Can I run Ansible/Terraform directly instead of `make`? | Yes — see the provider's README for the exact paths, or run `make help` to see how the Makefile composes the commands |
 | Upgrading from the pre-modular layout? | Terraform addresses changed — `terraform destroy` with your **old** checkout first, or migrate state manually with `terraform state mv` |
 | How do I transfer a world to a new server? | Back up on the old server (the maintenance script does this on every start), copy the archive, extract over `.../PalServer/Pal/Saved` on the new one, restart |
 | Where is the Terraform state stored? | Locally in `terraform/providers/<name>/` (git-ignored); remote backends are supported — see [Remote state](docs/provider-contract.md#remote-state) |
