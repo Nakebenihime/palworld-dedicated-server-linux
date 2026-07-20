@@ -2,67 +2,172 @@
 # Default game-settings applied to PalWorldSettings.ini.
 # This is an internal constant, not a user override point — override individual
 # keys via palworld_settings_overrides in group_vars (see defaults/main.yml).
-# Full parameter reference: https://tech.palworldgame.com/optimize-game-balance
+# Full parameter reference: https://docs.palworldgame.com/settings-and-operation/configuration/
 palworld_settings_defaults:
+
+  # --- randomizer ---------------------------------------------------------------
+  randomizer_type: None
+  randomizer_seed: ""
+  b_is_randomizer_pal_level_random: false
+
+  # --- world -------------------------------------------------------------------
   difficulty: None
   day_time_speed_rate: 1.0
   night_time_speed_rate: 1.0
-  exp_rate: 1.0
+
+  # --- pal ---------------------------------------------------------------------
   pal_capture_rate: 1.0
   pal_spawn_num_rate: 1.0
   pal_damage_rate_attack: 1.0
   pal_damage_rate_defense: 1.0
+  pal_stomach_decrease_rate: 1.0
+  pal_stamina_decrease_rate: 1.0
+  pal_auto_hp_regene_rate: 1.0
+  pal_auto_hp_regene_rate_in_sleep: 1.0
+  pal_egg_default_hatching_time: 72
+  b_active_unko: false
+  enable_predator_boss_pal: true
+  monster_farm_action_speed_rate: 1.0
+
+  # --- player ------------------------------------------------------------------
+  exp_rate: 1.0
+  work_speed_rate: 1.0
   player_damage_rate_attack: 1.0
   player_damage_rate_defense: 1.0
   player_stomach_decrease_rate: 1.0
   player_stamina_decrease_rate: 1.0
   player_auto_hp_regene_rate: 1.0
   player_auto_hp_regene_rate_in_sleep: 1.0
-  pal_stomach_decrease_rate: 1.0
-  pal_stamina_decrease_rate: 1.0
-  pal_auto_hp_regene_rate: 1.0
-  pal_auto_hp_regene_rate_in_sleep: 1.0
+  item_weight_rate: 1.0
+  equipment_durability_damage_rate: 1.0
+  item_corruption_multiplier: 1.0
+
+  # --- building ----------------------------------------------------------------
+  build_object_hp_rate: 1.0
   build_object_damage_rate: 1.0
   build_object_deterioration_damage_rate: 1.0
+  b_build_area_limit: false
+  max_building_limit_num: 0
+  b_enable_building_player_uid_display: false
+  building_name_display_cache_ttl_seconds: 60
+
+  # --- collection & resources --------------------------------------------------
   collection_drop_rate: 1.0
   collection_object_hp_rate: 1.0
   collection_object_respawn_speed_rate: 1.0
   enemy_drop_item_rate: 1.0
+
+  # --- items & drops -----------------------------------------------------------
   death_penalty: All
+  drop_item_max_num: 3000
+  physics_active_drop_item_max_num: -1
+  drop_item_max_num_unko: 100
+  drop_item_alive_max_hours: 1.0
+
+  # --- base camp ---------------------------------------------------------------
+  base_camp_max_num: 128
+  base_camp_max_num_in_guild: 4
+  base_camp_worker_max_num: 15
+
+  # --- guild -------------------------------------------------------------------
+  guild_player_max_num: 20
+  b_auto_reset_guild_no_online_players: false
+  auto_reset_guild_time_no_online_players: 72
+  guild_rejoin_cooldown_minutes: 0
+  auto_transfer_master_check_interval_seconds: 3600.0
+  auto_transfer_master_threshold_days: 14
+  max_guilds_per_frame: 10
+
+  # --- gameplay modes ----------------------------------------------------------
+  b_is_multiplay: false
+  b_is_pvp: false
+  b_hardcore: false
+  b_pal_lost: false
+  b_character_recreate_in_hardcore: false
+  coop_player_max_num: 4
+
+  # --- pvp ---------------------------------------------------------------------
+  b_display_pvp_item_num_on_world_map_base_camp: false
+  b_display_pvp_item_num_on_world_map_player: false
+  additional_drop_item_when_player_killing_in_pvp_mode: "PlayerDropItem"
+  additional_drop_item_num_when_player_killing_in_pvp_mode: 1
+  b_additional_drop_item_when_player_killing_in_pvp_mode: false
+
+  # --- combat & encounters -----------------------------------------------------
   b_enable_player_to_player_damage: false
   b_enable_friendly_fire: false
   b_enable_invader_enemy: true
-  b_active_unko: false
+  b_enable_defense_other_guild_player: false
+  b_can_pickup_other_guild_death_penalty_drop: false
+  supply_drop_span: 180
+
+  # --- respawn & penalties -----------------------------------------------------
+  b_enable_non_login_penalty: true
+  block_respawn_time: 5.0
+  respawn_penalty_duration_threshold: 0.0
+  respawn_penalty_time_scale: 2.0
+
+  # --- aim assist --------------------------------------------------------------
   b_enable_aim_assist_pad: true
   b_enable_aim_assist_keyboard: false
-  drop_item_max_num: 3000
-  drop_item_max_num_unko: 100
-  base_camp_max_num: 128
-  base_camp_worker_max_num: 15
-  drop_item_alive_max_hours: 1.0
-  b_auto_reset_guild_no_online_players: false
-  auto_reset_guild_time_no_online_players: 72
-  guild_player_max_num: 20
-  pal_egg_default_hatching_time: 72
-  work_speed_rate: 1.0
-  b_is_multiplay: false
-  b_is_pvp: false
-  b_can_pickup_other_guild_death_penalty_drop: false
-  b_enable_non_login_penalty: true
+
+  # --- travel ------------------------------------------------------------------
   b_enable_fast_travel: true
-  b_is_start_location_select_by_map: true
+  b_enable_fast_travel_only_base_camp: false
+  b_is_start_location_select_by_map: false
+
+  # --- visibility --------------------------------------------------------------
   b_exist_player_after_logout: false
-  b_enable_defense_other_guild_player: false
-  coop_player_max_num: 4
+  b_invisible_other_guild_base_camp_area_fx: false
+
+  # --- technology --------------------------------------------------------------
+  deny_technology_list: ""
+
+  # --- stat enhancement --------------------------------------------------------
+  b_allow_enhance_stat_health: true
+  b_allow_enhance_stat_attack: true
+  b_allow_enhance_stat_stamina: true
+  b_allow_enhance_stat_weight: true
+  b_allow_enhance_stat_work_speed: true
+
+  # --- voice chat --------------------------------------------------------------
+  b_enable_voice_chat: false
+  voice_chat_max_volume_distance: 3000.0
+  voice_chat_zero_volume_distance: 15000.0
+
+  # --- server ------------------------------------------------------------------
   server_player_max_num: 32
   server_name: "{{ palworld_server_name }}"
   server_description: "{{ palworld_server_description }}"
   admin_password: "{{ palworld_admin_password }}"
   server_password: "{{ palworld_server_password }}"
+  b_allow_client_mod: true
   public_port: "{{ palworld_public_port }}"
   public_ip: "{{ ansible_facts['default_ipv4']['address'] }}"
+  b_show_player_list: false
+  b_is_show_join_left_message: true
+  chat_post_limit_per_minute: 30
+  crossplay_platforms: "(Steam,Xbox,PS5,Mac)"
+  b_is_use_backup_save_data: true
+  log_format_type: Text
+  auto_save_span: 30.0
+  b_allow_global_palbox_export: true
+  b_allow_global_palbox_import: false
+
+  # --- rcon --------------------------------------------------------------------
   rcon_enabled: false
   rcon_port: 25575
+
+  # --- rest api ----------------------------------------------------------------
+  rest_api_enabled: false
+  rest_api_port: 8212
+
+  # --- region & auth -----------------------------------------------------------
   region: ""
   b_use_auth: true
   ban_list_url: "https://api.palworldgame.com/api/banlist.txt"
+
+  # --- performance -------------------------------------------------------------
+  server_replicate_pawn_cull_distance: 15000.0
+  item_container_force_mark_dirty_interval: 1.0
+  player_data_pal_storage_update_check_tick_interval: 1.0

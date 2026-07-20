@@ -13,8 +13,9 @@
 # --- passwords (REQUIRED) ----------------------------------------------------
 # The deployment fails fast if these are empty. This file is tracked by git,
 # so never write password values here — export them instead:
-#   export PALWORLD_SERVER_PASSWORD="$(openssl rand -base64 15)"
-#   export PALWORLD_ADMIN_PASSWORD="$(openssl rand -base64 15)"
+#   eval $(make gen-passwords)                       # recommended
+#   export PALWORLD_SERVER_PASSWORD="$(openssl rand -base64 15)"   # or manually
+#   export PALWORLD_ADMIN_PASSWORD="$(openssl rand -base64 15)".   # or manually
 # (Teams can use ansible-vault-encrypted variables instead of env vars.)
 palworld_server_password: "{{ lookup('env', 'PALWORLD_SERVER_PASSWORD') }}"
 palworld_admin_password: "{{ lookup('env', 'PALWORLD_ADMIN_PASSWORD') }}"
