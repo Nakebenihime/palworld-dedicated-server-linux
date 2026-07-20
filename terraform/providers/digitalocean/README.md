@@ -30,6 +30,6 @@ See [`terraform.tfvars.example`](terraform.tfvars.example) for all variables.
 
 | Topic | Detail |
 |-------|--------|
-| Image | `droplet_image` must be a Debian/Ubuntu slug the Ansible roles support (`debian-13-x64`, `ubuntu-26-04-x64`, `ubuntu-24-04-x64`, `ubuntu-22-04-x64`) |
+| Image | `droplet_image` must be a Debian/Ubuntu slug the Ansible roles support (`debian-13-x64`, `ubuntu-26-04-x64`, `ubuntu-24-04-x64`) |
 | State | Local to this directory by default; for team use, configure a [remote backend](../../../docs/provider-contract.md#remote-state) |
 | Running commands | Always go through the root `Makefile` — `inventory.yml`'s relative `project_path` depends on running from the repo root |
